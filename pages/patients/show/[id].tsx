@@ -1,9 +1,6 @@
 import { AntdShowInferencer } from "@refinedev/inferencer/antd";
-import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../api/auth/[...nextauth]";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 import { inferencerPredefinedMeta } from "src/inferencerPredefinedMeta";
 
@@ -11,20 +8,31 @@ export default function BlogPostShow() {
   return <AntdShowInferencer meta={inferencerPredefinedMeta} />;
 }
 
-export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+export const getServerSideProps = async ({
+  req,
+  res,
+  locale,
+}: {
+  req: Request;
+  res: Response;
+  locale: string;
+}) => {
+  const { isAuthenticated } = getKindeServerSession(req, res);
+  const isLoggedIn = await isAuthenticated();
 
-  const translateProps = await serverSideTranslations(context.locale ?? "en", [
+  const translateProps = await serverSideTranslations(locale ?? "en", [
     "common",
   ]);
 
-  if (!session) {
+  if (!isLoggedIn) {
     return {
       props: {
         ...translateProps,
       },
       redirect: {
-        destination: `/login?to=${encodeURIComponent("/patients")}`,
+        destination: `/api/auth/login?post_login_redirect_url=${encodeURIComponent(
+          "/patients"
+        )}`,
         permanent: false,
       },
     };

@@ -10,10 +10,9 @@ import routerProvider, {
   UnsavedChangesNotifier,
 } from "@refinedev/nextjs-router";
 import type { NextPage } from "next";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Header } from "@components/header";
 import { ColorModeContextProvider } from "@contexts";
@@ -22,15 +21,23 @@ import dataProvider, { GraphQLClient } from "@refinedev/hasura";
 import { App as AntdApp } from "antd";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { AppIcon } from "src/components/app-icon";
+import { KindeProvider, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
+import { redirect } from "next/navigation";
 
 const API_URL = "https://beloved-loon-39.hasura.app/v1/graphql";
 
-const client = new GraphQLClient(API_URL, {
-  headers: {
-    "x-hasura-role": "admin",
-    "x-hasura-admin-secret": ""
-  },
-});
+const client = (getToken: () => string | null) =>
+  new GraphQLClient(API_URL, {
+    fetch: (url: string, options: RequestInit) => {
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+    },
+  });
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   noLayout?: boolean;
@@ -43,7 +50,7 @@ type AppPropsWithLayout = AppProps & {
 const App = (props: React.PropsWithChildren) => {
   const { t, i18n } = useTranslation();
 
-  const { data, status } = useSession();
+  const { user, isAuthenticated, isLoading, getToken } = useKindeAuth();
   const router = useRouter();
   const { to } = router.query;
 
@@ -53,26 +60,22 @@ const App = (props: React.PropsWithChildren) => {
     getLocale: () => i18n.language,
   };
 
-  if (status === "loading") {
+  if (isLoading) {
     return <span>loading...</span>;
   }
 
   const authProvider: AuthBindings = {
     login: async () => {
-      signIn("auth0", {
-        callbackUrl: to ? to.toString() : "/",
-        redirect: true,
-      });
+      redirect(
+        `/api/auth/login?post_login_redirect_url=${to ? to.toString() : "/"}`
+      );
 
       return {
         success: true,
       };
     },
     logout: async () => {
-      signOut({
-        redirect: true,
-        callbackUrl: "/login",
-      });
+      router.push(`/api/auth/logout`);
 
       return {
         success: true,
@@ -85,10 +88,12 @@ const App = (props: React.PropsWithChildren) => {
       };
     },
     check: async () => {
-      if (status === "unauthenticated") {
+      if (!isAuthenticated) {
         return {
           authenticated: false,
-          redirectTo: "/login",
+          redirectTo: `/api/auth/login?post_login_redirect_url=${
+            to ? to.toString() : "/"
+          }`,
         };
       }
 
@@ -100,11 +105,10 @@ const App = (props: React.PropsWithChildren) => {
       return null;
     },
     getIdentity: async () => {
-      if (data?.user) {
-        const { user } = data;
+      if (user) {
         return {
-          name: user.name,
-          avatar: user.image,
+          name: user.given_name,
+          avatar: user.picture,
         };
       }
 
@@ -112,64 +116,44 @@ const App = (props: React.PropsWithChildren) => {
     },
   };
 
-  return <>
-    <RefineKbarProvider>
-      <ColorModeContextProvider>
-        <AntdApp>
-          <Refine
-            routerProvider={routerProvider}
-            dataProvider={dataProvider(client)}
-            notificationProvider={useNotificationProvider}
-            authProvider={authProvider}
-            i18nProvider={i18nProvider}
-            resources={[{
-              name: "blog_posts",
-              list: "/blog-posts",
-              create: "/blog-posts/create",
-              edit: "/blog-posts/edit/:id",
-              show: "/blog-posts/show/:id",
-              meta: {
-                canDelete: true,
-              },
-            }, {
-              name: "categories",
-              list: "/categories",
-              create: "/categories/create",
-              edit: "/categories/edit/:id",
-              show: "/categories/show/:id",
-              meta: {
-                canDelete: true,
-              },
-            }, {
-              name: "patients",
-              list: "/patients",
-              create: "/patients/create",
-              edit: "/patients/edit/:id",
-              show: "/patients/show/:id",
-              meta: {
-                canDelete: true,
-              },
-            }, {
-              name: "patients",
-              list: "/patients",
-              create: "/patients/create",
-              edit: "/patients/edit/:id",
-              show: "/patients/show/:id"
-            }]}
-            options={{
-              syncWithLocation: true,
-              warnWhenUnsavedChanges: true,
-              useNewQueryKeys: true,
-            }}
-          >
-            {props.children}
-            <RefineKbar />
-            <UnsavedChangesNotifier />
-          </Refine>
-        </AntdApp>
-      </ColorModeContextProvider>
-    </RefineKbarProvider>
-  </>;
+  return (
+    <>
+      <RefineKbarProvider>
+        <ColorModeContextProvider>
+          <AntdApp>
+            <Refine
+              routerProvider={routerProvider}
+              dataProvider={dataProvider(client(getToken))}
+              notificationProvider={useNotificationProvider}
+              authProvider={authProvider}
+              i18nProvider={i18nProvider}
+              resources={[
+                {
+                  name: "patients",
+                  list: "/patients",
+                  create: "/patients/create",
+                  edit: "/patients/edit/:id",
+                  show: "/patients/show/:id",
+                  meta: {
+                    canDelete: true,
+                  },
+                },
+              ]}
+              options={{
+                syncWithLocation: true,
+                warnWhenUnsavedChanges: true,
+                useNewQueryKeys: true,
+              }}
+            >
+              {props.children}
+              <RefineKbar />
+              <UnsavedChangesNotifier />
+            </Refine>
+          </AntdApp>
+        </ColorModeContextProvider>
+      </RefineKbarProvider>
+    </>
+  );
 };
 
 function MyApp({
@@ -188,7 +172,7 @@ function MyApp({
         Title={({ collapsed }) => (
           <ThemedTitleV2
             collapsed={collapsed}
-            text="refine Project"
+            text="Medixi"
             icon={<AppIcon />}
           />
         )}
@@ -199,9 +183,9 @@ function MyApp({
   };
 
   return (
-    <SessionProvider session={session}>
+    <KindeProvider>
       <App>{renderComponent()}</App>
-    </SessionProvider>
+    </KindeProvider>
   );
 }
 
