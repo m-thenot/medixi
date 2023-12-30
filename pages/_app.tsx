@@ -135,8 +135,12 @@ const App = (props: React.PropsWithChildren) => {
                   edit: "/patients/edit/:id",
                   show: "/patients/show/:id",
                   meta: {
-                    canDelete: true,
+                    canDelete: false,
                   },
+                },
+                {
+                  name: "users",
+                  list: "/users",
                 },
               ]}
               options={{
