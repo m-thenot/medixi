@@ -110,5 +110,27 @@
   },
   "table": {
     "actions": "Actions"
+  },
+  "users": {
+    "list": {
+      "title": "Utilisateurs"
+    },
+    "fields": {
+      "firstname": "Prénom",
+      "lastname": "Nom de famille",
+      "email": "Email",
+      "createdOn": "Créé le"
+    }
+  },
+  "patients": {
+    "create": {
+      "title": "Ajouter un patient"
+    },
+    "fields": {
+      "id": "Id",
+      "createdOn": "Créé le",
+      "firstname": "Prénom",
+      "lastname": "Nom de famille"
+    }
   }
 }

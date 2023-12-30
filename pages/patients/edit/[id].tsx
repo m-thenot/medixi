@@ -1,14 +1,52 @@
-import { AntdEditInferencer } from "@refinedev/inferencer/antd";
-import { GetServerSideProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import React from "react";
+import { IResourceComponentsProps, useTranslate } from "@refinedev/core";
+import { Edit, useForm } from "@refinedev/antd";
+import { Form, Input } from "antd";
 
-import { inferencerPredefinedMeta } from "src/inferencerPredefinedMeta";
+export const PatientEdit: React.FC<IResourceComponentsProps> = () => {
+  const translate = useTranslate();
+  const { formProps, saveButtonProps, queryResult } = useForm({
+    meta: { fields: ["id", "firstname", "lastname"] },
+  });
 
-export default function BlogPostEdit() {
-  return <AntdEditInferencer meta={inferencerPredefinedMeta} />;
-}
+  const patientsData = queryResult?.data?.data;
+
+  return (
+    <Edit
+      saveButtonProps={saveButtonProps}
+      title={`${patientsData?.firstname} ${patientsData?.lastname}`}
+    >
+      <Form {...formProps} layout="vertical">
+        <Form.Item
+          label={translate("patients.fields.firstname")}
+          name={["firstname"]}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label={translate("patients.fields.lastname")}
+          name={["lastname"]}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      </Form>
+    </Edit>
+  );
+};
+
+export default PatientEdit;
 
 export const getServerSideProps = async ({
   req,
