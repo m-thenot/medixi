@@ -71,6 +71,11 @@
     "edit": "Edit",
     "show": "Show"
   },
+  "form": {
+    "fields": {
+      "required": "This field is required"
+    }
+  },
   "buttons": {
     "create": "Create",
     "save": "Save",
@@ -99,7 +104,9 @@
     "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
     "editSuccess": "Successfully edited {{resource}}",
     "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
-    "importProgress": "Importing: {{processed}}/{{total}}"
+    "importProgress": "Importing: {{processed}}/{{total}}",
+    "defaultErrorTitle": "An error has occurred!",
+    "defaultErrorMessage": "Please contact technical support."
   },
   "loading": "Loading",
   "tags": {
@@ -110,5 +117,36 @@
   },
   "table": {
     "actions": "Actions"
+  },
+  "users": {
+    "add": {
+      "button": "Add a new user",
+      "invalidEmail": "Invalid email",
+      "submitButton": "Add",
+      "notifications": {
+        "title": "User successfully added !",
+        "message": "An invitation email has just been sent to ${email}."
+      }
+    },
+    "list": {
+      "title": "Users"
+    },
+    "fields": {
+      "firstname": "Firstname",
+      "lastname": "Lastname",
+      "email": "Email",
+      "createdOn": "Created on"
+    }
+  },
+  "patients": {
+    "create": {
+      "title": "Add a new patient"
+    },
+    "fields": {
+      "id": "Id",
+      "createdOn": "Created on",
+      "firstname": "Firstname",
+      "lastname": "Lastname"
+    }
   }
 }

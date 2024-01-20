@@ -65,6 +65,11 @@
       "backHome": "Retour à l'accueil"
     }
   },
+  "form": {
+    "fields": {
+      "required": "Ce champ est requis"
+    }
+  },
   "actions": {
     "list": "Liste",
     "create": "Créer",
@@ -99,7 +104,9 @@
     "deleteError": "Erreur lors de la suppression de {{resource}} (code d'état : {{statusCode}})",
     "editSuccess": "{{resource}} modifié avec succès",
     "editError": "Erreur lors de la modification de {{resource}} (code d'état : {{statusCode}})",
-    "importProgress": "Importation : {{processed}}/{{total}}"
+    "importProgress": "Importation : {{processed}}/{{total}}",
+    "defaultErrorTitle": "Une erreur est survenue !",
+    "defaultErrorMessage": "Merci de contacter le support technique."
   },
   "loading": "Chargement",
   "tags": {
@@ -112,6 +119,15 @@
     "actions": "Actions"
   },
   "users": {
+    "add": {
+      "button": "Ajouter un utilisateur",
+      "invalidEmail": "Email invalide",
+      "submitButton": "Ajouter",
+      "notifications": {
+        "title": "Utilisateur ajouté avec succès !",
+        "message": "Un mail d'invitation vient d'être envoyé à ${email}."
+      }
+    },
     "list": {
       "title": "Utilisateurs"
     },

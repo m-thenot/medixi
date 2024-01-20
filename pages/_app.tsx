@@ -12,7 +12,7 @@ import routerProvider, {
 import type { NextPage } from "next";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 
 import { Header } from "@components/header";
 import { ColorModeContextProvider } from "@contexts";
@@ -23,11 +23,10 @@ import { appWithTranslation, useTranslation } from "next-i18next";
 import { AppIcon } from "src/components/app-icon";
 import { KindeProvider, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { redirect } from "next/navigation";
-
-const API_URL = "https://beloved-loon-39.hasura.app/v1/graphql";
+import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 const client = (getToken: () => string | null) =>
-  new GraphQLClient(API_URL, {
+  new GraphQLClient(process.env.NEXT_PUBLIC_API_URL!, {
     fetch: (url: string, options: RequestInit) => {
       return fetch(url, {
         ...options,
@@ -136,11 +135,16 @@ const App = (props: React.PropsWithChildren) => {
                   show: "/patients/show/:id",
                   meta: {
                     canDelete: false,
+                    icon: <UserOutlined />,
                   },
                 },
                 {
                   name: "users",
                   list: "/users",
+                  meta: {
+                    label: t("users.list.title"),
+                    icon: <SettingOutlined />,
+                  },
                 },
               ]}
               options={{

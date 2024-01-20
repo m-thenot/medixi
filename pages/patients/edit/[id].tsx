@@ -16,7 +16,7 @@ export const PatientEdit: React.FC<IResourceComponentsProps> = () => {
   return (
     <Edit
       saveButtonProps={saveButtonProps}
-      title={`${patientsData?.firstname} ${patientsData?.lastname}`}
+      title={`Modifier - ${patientsData?.firstname} ${patientsData?.lastname}`}
     >
       <Form {...formProps} layout="vertical">
         <Form.Item
