@@ -1,8 +1,6 @@
 "use client";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { AntdListInferencer } from "@refinedev/inferencer/antd";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { inferencerPredefinedMeta } from "src/inferencerPredefinedMeta";
 import {
   IResourceComponentsProps,
   BaseRecord,

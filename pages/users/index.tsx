@@ -153,7 +153,7 @@ const UsersList: React.FC<IUsersListProps> = ({ users, organization }) => {
           },
         }}
       >
-        <Table dataSource={users} rowKey="id">
+        <Table scroll={{ x: true }} dataSource={users} rowKey="id">
           <Table.Column
             dataIndex="firstName"
             title={translate("users.fields.firstname")}
