@@ -5,13 +5,7 @@ import {
   getKindeServerSession,
 } from "@kinde-oss/kinde-auth-nextjs/server";
 import { BaseRecord, useNotification, useTranslate } from "@refinedev/core";
-import {
-  DateField,
-  DeleteButton,
-  EditButton,
-  List,
-  useModalForm,
-} from "@refinedev/antd";
+import { DateField, EditButton, List, useModalForm } from "@refinedev/antd";
 import { Button, Form, Input, Modal, Space, Table } from "antd";
 import { User } from "@kinde-oss/kinde-typescript-sdk/dist/types";
 import { useRef, useState } from "react";
@@ -28,7 +22,7 @@ interface IUsersListProps {
 
 const UsersList: React.FC<IUsersListProps> = ({ users, organization }) => {
   const translate = useTranslate();
-  const { accessToken, user } = useKindeAuth();
+  const { user } = useKindeAuth();
   const { open } = useNotification();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -179,12 +173,22 @@ const UsersList: React.FC<IUsersListProps> = ({ users, organization }) => {
             render={(value) => <DateField value={value} locales="fr" />}
           />
           <Table.Column
+            dataIndex="totalSignIns"
+            title={translate("users.fields.status")}
+            render={(value) =>
+              value > 0
+                ? translate("users.list.status.active")
+                : translate("users.list.status.invitationPending")
+            }
+          />
+          <Table.Column
             title={translate("table.actions")}
             dataIndex="actions"
             render={(_, record: BaseRecord) => (
               <Space>
                 <EditButton hideText size="small" recordItemId={record.id} />
-                <DeleteButton hideText size="small" recordItemId={record.id} />
+                {/*                 <DeleteButton hideText size="small" recordItemId={record.id} />
+                 */}{" "}
               </Space>
             )}
           />

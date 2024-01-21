@@ -141,6 +141,7 @@ const App = (props: React.PropsWithChildren) => {
                 {
                   name: "users",
                   list: "/users",
+                  edit: "/users/edit/:id",
                   meta: {
                     label: t("users.list.title"),
                     icon: <SettingOutlined />,

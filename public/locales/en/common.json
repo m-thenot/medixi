@@ -128,14 +128,25 @@
         "message": "An invitation email has just been sent to {{email}}."
       }
     },
+    "update": {
+      "notifications": {
+        "title": "User successfully updated !",
+        "message": "User data have been successfully updated."
+      }
+    },
     "list": {
-      "title": "Users"
+      "title": "Users",
+      "status": {
+        "invitationPending": "🟡 Invitation pending",
+        "active": "🟢 Active"
+      }
     },
     "fields": {
       "firstname": "Firstname",
       "lastname": "Lastname",
       "email": "Email",
-      "createdOn": "Created on"
+      "createdOn": "Created on",
+      "status": "Status"
     }
   },
   "patients": {

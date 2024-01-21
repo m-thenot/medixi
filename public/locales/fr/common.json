@@ -129,13 +129,24 @@
       }
     },
     "list": {
-      "title": "Utilisateurs"
+      "title": "Utilisateurs",
+      "status": {
+        "invitationPending": "🟡 Invitation en attendre",
+        "active": "🟢 Actif"
+      }
+    },
+    "update": {
+      "notifications": {
+        "title": "Utilisateur mise à jour aavec succès !",
+        "message": "Les données de cet utilisateur ont été mise à jour avec succès."
+      }
     },
     "fields": {
       "firstname": "Prénom",
       "lastname": "Nom de famille",
       "email": "Email",
-      "createdOn": "Créé le"
+      "createdOn": "Créé le",
+      "status": "Statut"
     }
   },
   "patients": {
