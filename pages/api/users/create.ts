@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import InviteUserEmail from "src/emails/UserInvitation";
+import { sendEmail } from "src/services/email";
 
 const AUTH_API_URL = process.env.KINDE_ISSUER_URL;
 
@@ -6,7 +8,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { firstname, lastname, email, orgCode } = req.body;
+  const { firstname, lastname, email, orgCode, orgName, invitedByFirstname } =
+    req.body;
 
   try {
     const resToken = await fetch(`${AUTH_API_URL}/oauth2/token`, {
@@ -78,6 +81,26 @@ export default async function handler(
     } else {
       console.error("Failed to create the user", { email, orgCode });
       throw new Error("Failed to create the user");
+    }
+
+    const { error } = await sendEmail({
+      to: email,
+      subject: `${invitedByFirstname} vous a invité sur Medixi !`,
+      react: InviteUserEmail({
+        invitedByFirstname,
+        firstname,
+        orgName,
+        inviteLink: `${process.env.KINDE_SITE_URL}/api/auth/login?login_hint=${email}`,
+      }),
+    });
+
+    if (error) {
+      console.error("Failed to send user invitation email", {
+        email,
+        orgCode,
+        error,
+      });
+      throw new Error("Failed to send user invitation email");
     }
 
     res.status(200).json({ message: "User created with success !" });

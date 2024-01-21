@@ -125,7 +125,7 @@
       "submitButton": "Add",
       "notifications": {
         "title": "User successfully added !",
-        "message": "An invitation email has just been sent to ${email}."
+        "message": "An invitation email has just been sent to {{email}}."
       }
     },
     "list": {

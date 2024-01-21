@@ -4,36 +4,34 @@ import {
   createKindeManagementAPIClient,
   getKindeServerSession,
 } from "@kinde-oss/kinde-auth-nextjs/server";
+import { BaseRecord, useNotification, useTranslate } from "@refinedev/core";
 import {
-  BaseRecord,
-  useInvalidate,
-  useNotification,
-  useTranslate,
-} from "@refinedev/core";
-import {
+  DateField,
   DeleteButton,
   EditButton,
   List,
-  ShowButton,
   useModalForm,
 } from "@refinedev/antd";
 import { Button, Form, Input, Modal, Space, Table } from "antd";
 import { User } from "@kinde-oss/kinde-typescript-sdk/dist/types";
 import { useRef, useState } from "react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
+import { Organization } from "@kinde-oss/kinde-typescript-sdk";
+
 import { useRouter } from "next/router";
+import "dayjs/locale/fr";
 
 interface IUsersListProps {
   users: User[];
+  organization: Organization;
 }
 
-const UsersList: React.FC<IUsersListProps> = ({ users }) => {
+const UsersList: React.FC<IUsersListProps> = ({ users, organization }) => {
   const translate = useTranslate();
-  const { accessToken } = useKindeAuth();
+  const { accessToken, user } = useKindeAuth();
   const { open } = useNotification();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const submitButton = useRef<HTMLElement>(null);
   const {
     show: createModalShow,
@@ -62,7 +60,9 @@ const UsersList: React.FC<IUsersListProps> = ({ users }) => {
         email,
         firstname,
         lastname,
-        orgCode: (accessToken as any)["x-hasura-org-code"],
+        orgCode: organization.code,
+        orgName: organization.name,
+        invitedByFirstname: user?.given_name,
       }),
     };
     const result = await fetch("/api/users/create", requestOptions);
@@ -72,7 +72,7 @@ const UsersList: React.FC<IUsersListProps> = ({ users }) => {
       open?.({
         type: "success",
         description: translate("users.add.notifications.title"),
-        message: translate("users.add.notifications.message"),
+        message: translate("users.add.notifications.message", { email }),
         undoableTimeout: 5,
       });
 
@@ -176,6 +176,7 @@ const UsersList: React.FC<IUsersListProps> = ({ users }) => {
           <Table.Column
             dataIndex="createdOn"
             title={translate("users.fields.createdOn")}
+            render={(value) => <DateField value={value} locales="fr" />}
           />
           <Table.Column
             title={translate("table.actions")}
@@ -183,7 +184,6 @@ const UsersList: React.FC<IUsersListProps> = ({ users }) => {
             render={(_, record: BaseRecord) => (
               <Space>
                 <EditButton hideText size="small" recordItemId={record.id} />
-                <ShowButton hideText size="small" recordItemId={record.id} />
                 <DeleteButton hideText size="small" recordItemId={record.id} />
               </Space>
             )}
@@ -205,8 +205,9 @@ export const getServerSideProps = async ({
   res: Response;
   locale: string;
 }) => {
-  const { isAuthenticated } = getKindeServerSession(req, res);
+  const { isAuthenticated, getAccessToken } = getKindeServerSession(req, res);
   const isLoggedIn = await isAuthenticated();
+  const accessToken = await getAccessToken();
 
   const translateProps = await serverSideTranslations(locale ?? "en", [
     "common",
@@ -228,11 +229,15 @@ export const getServerSideProps = async ({
 
   const client = await createKindeManagementAPIClient(req, res);
   const users = await client.usersApi.getUsers();
+  const organization = await client.organizationsApi.getOrganization({
+    code: (accessToken as any)?.["x-hasura-org-code"],
+  });
 
   return {
     props: {
       ...translateProps,
       users: JSON.parse(JSON.stringify(users.users)),
+      organization: JSON.parse(JSON.stringify(organization)),
     },
   };
 };

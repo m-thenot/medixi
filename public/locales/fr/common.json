@@ -125,7 +125,7 @@
       "submitButton": "Ajouter",
       "notifications": {
         "title": "Utilisateur ajouté avec succès !",
-        "message": "Un mail d'invitation vient d'être envoyé à ${email}."
+        "message": "Un mail d'invitation vient d'être envoyé à {{email}}."
       }
     },
     "list": {
