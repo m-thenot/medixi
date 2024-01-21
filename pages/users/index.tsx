@@ -13,7 +13,6 @@ import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { Organization } from "@kinde-oss/kinde-typescript-sdk";
 
 import { useRouter } from "next/router";
-import "dayjs/locale/fr";
 
 interface IUsersListProps {
   users: User[];

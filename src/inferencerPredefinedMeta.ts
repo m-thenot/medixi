@@ -5,20 +5,12 @@
  * Also they will be included in the generated code, making them easily editable after you generate the boilerplate code for your resource.
  */
 export const inferencerPredefinedMeta = {
-  patients:{
+  patients: {
     getList: {
-      fields: [
-        "id",
-        "firstname",
-        "lastname",
-      ],
+      fields: ["id", "firstname", "lastname", "birth_date"],
     },
     getOne: {
-      fields: [
-        "id",
-        "firstname",
-        "lastname"
-      ],
+      fields: ["id", "firstname", "lastname", "birth_date"],
     },
-  }
+  },
 };

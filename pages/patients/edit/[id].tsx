@@ -3,12 +3,13 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import React from "react";
 import { IResourceComponentsProps, useTranslate } from "@refinedev/core";
 import { Edit, useForm } from "@refinedev/antd";
-import { Form, Input } from "antd";
+import { DatePicker, Form, Input } from "antd";
+import dayjs from "dayjs";
 
 export const PatientEdit: React.FC<IResourceComponentsProps> = () => {
   const translate = useTranslate();
   const { formProps, saveButtonProps, queryResult } = useForm({
-    meta: { fields: ["id", "firstname", "lastname"] },
+    meta: { fields: ["id", "firstname", "lastname", "birth_date"] },
   });
 
   const patientsData = queryResult?.data?.data;
@@ -18,13 +19,21 @@ export const PatientEdit: React.FC<IResourceComponentsProps> = () => {
       saveButtonProps={saveButtonProps}
       title={`Modifier - ${patientsData?.firstname} ${patientsData?.lastname}`}
     >
-      <Form {...formProps} layout="vertical">
+      <Form
+        {...formProps}
+        initialValues={{
+          ...formProps.initialValues,
+          birth_date: dayjs(formProps?.initialValues?.birth_date || null),
+        }}
+        layout="vertical"
+      >
         <Form.Item
           label={translate("patients.fields.firstname")}
           name={["firstname"]}
           rules={[
             {
               required: true,
+              message: translate("form.fields.required"),
             },
           ]}
         >
@@ -36,10 +45,25 @@ export const PatientEdit: React.FC<IResourceComponentsProps> = () => {
           rules={[
             {
               required: true,
+              message: translate("form.fields.required"),
             },
           ]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label={translate("patients.fields.birthDate")}
+          name={["birth_date"]}
+          rules={[
+            {
+              required: true,
+              message: translate("form.fields.required"),
+            },
+          ]}
+        >
+          <DatePicker
+            placeholder={translate("patients.fields.birthDatePlaceholder")}
+          />
         </Form.Item>
       </Form>
     </Edit>

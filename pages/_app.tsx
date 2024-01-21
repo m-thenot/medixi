@@ -24,6 +24,7 @@ import { AppIcon } from "src/components/app-icon";
 import { KindeProvider, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { redirect } from "next/navigation";
 import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+import "dayjs/locale/fr";
 
 const client = (getToken: () => string | null) =>
   new GraphQLClient(process.env.NEXT_PUBLIC_API_URL!, {

@@ -14,6 +14,7 @@ import {
   EditButton,
   ShowButton,
   DeleteButton,
+  DateField,
 } from "@refinedev/antd";
 import { Table, Space } from "antd";
 
@@ -22,13 +23,12 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
   const { tableProps } = useTable({
     syncWithLocation: true,
 
-    meta: { fields: ["id", "firstname", "lastname"] },
+    meta: { fields: ["firstname", "lastname", "birth_date"] },
   });
 
   return (
     <List>
       <Table {...tableProps} rowKey="id">
-        <Table.Column dataIndex="id" title={translate("patients.fields.id")} />
         <Table.Column
           dataIndex="firstname"
           title={translate("patients.fields.firstname")}
@@ -37,6 +37,12 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
           dataIndex="lastname"
           title={translate("patients.fields.lastname")}
         />
+        <Table.Column
+          dataIndex="birth_date"
+          title={translate("patients.fields.birthDate")}
+          render={(value) => <DateField value={value} locales="fr" />}
+        />
+
         <Table.Column
           title={translate("table.actions")}
           dataIndex="actions"

@@ -157,7 +157,9 @@
       "id": "Id",
       "createdOn": "Créé le",
       "firstname": "Prénom",
-      "lastname": "Nom de famille"
+      "lastname": "Nom de famille",
+      "birthDate": "Date de naissance",
+      "birthDatePlaceholder": "Sélectionner une date"
     }
   }
 }

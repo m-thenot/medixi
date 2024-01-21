@@ -3,13 +3,13 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import React from "react";
 import { IResourceComponentsProps, useTranslate } from "@refinedev/core";
 import { Create, useForm } from "@refinedev/antd";
-import { Form, Input } from "antd";
+import { DatePicker, Form, Input } from "antd";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 
 const PatientCreate: React.FC<IResourceComponentsProps> = () => {
   const translate = useTranslate();
   const { formProps, saveButtonProps } = useForm({
-    meta: { fields: ["id", "firstname", "lastname"] },
+    meta: { fields: ["id", "firstname", "lastname", "birth_date"] },
   });
 
   return (
@@ -24,6 +24,7 @@ const PatientCreate: React.FC<IResourceComponentsProps> = () => {
           rules={[
             {
               required: true,
+              message: translate("form.fields.required"),
             },
           ]}
         >
@@ -35,10 +36,25 @@ const PatientCreate: React.FC<IResourceComponentsProps> = () => {
           rules={[
             {
               required: true,
+              message: translate("form.fields.required"),
             },
           ]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label={translate("patients.fields.birthDate")}
+          name={["birth_date"]}
+          rules={[
+            {
+              required: true,
+              message: translate("form.fields.required"),
+            },
+          ]}
+        >
+          <DatePicker
+            placeholder={translate("patients.fields.birthDatePlaceholder")}
+          />
         </Form.Item>
       </Form>
     </Create>
