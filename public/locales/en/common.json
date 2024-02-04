@@ -151,7 +151,8 @@
   },
   "patients": {
     "create": {
-      "title": "Add a new patient"
+      "title": "Add a new patient",
+      "examTitle": "Examination"
     },
     "fields": {
       "id": "Id",
@@ -159,7 +160,20 @@
       "firstname": "Firstname",
       "lastname": "Lastname",
       "birthDate": "Birth date",
-      "birthDatePlaceholder": "Select a date"
+      "birthDatePlaceholder": "Select a date",
+      "examType": "Examination type",
+      "examDetails": "Examination details",
+      "examDate": "Examination date",
+      "examDatePlaceholder": "Sélectionner an examination date",
+      "examDocuments": "Files",
+      "upload": {
+        "title": "Click or drag file to this area to upload",
+        "description": "You can upload one or more files. We only accept files in ZIP and DICOM format.",
+        "notifications": {
+          "success": "{{filename}} file uploaded with success !",
+          "error": "{{filename}} file upload failed."
+        }
+      }
     }
   }
 }

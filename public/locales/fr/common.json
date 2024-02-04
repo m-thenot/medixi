@@ -137,7 +137,7 @@
     },
     "update": {
       "notifications": {
-        "title": "Utilisateur mise à jour aavec succès !",
+        "title": "Utilisateur mise à jour avec succès !",
         "message": "Les données de cet utilisateur ont été mise à jour avec succès."
       }
     },
@@ -151,7 +151,8 @@
   },
   "patients": {
     "create": {
-      "title": "Ajouter un patient"
+      "title": "Ajouter un patient",
+      "examTitle": "Examen"
     },
     "fields": {
       "id": "Id",
@@ -159,7 +160,20 @@
       "firstname": "Prénom",
       "lastname": "Nom de famille",
       "birthDate": "Date de naissance",
-      "birthDatePlaceholder": "Sélectionner une date"
+      "birthDatePlaceholder": "Sélectionner une date",
+      "examType": "Type d'examen",
+      "examDetails": "Détails de l'examen",
+      "examDate": "Date d'examen",
+      "examDatePlaceholder": "Sélectionner une date d'examen",
+      "examDocuments": "Documents",
+      "upload": {
+        "title": "Cliquez ou faites glisser le fichier dans cette zone pour le transférer",
+        "description": "Vous pouvez télécharger un ou plusieurs fichiers. Nous n'acceptons que les fichiers au format ZIP et DICOM",
+        "notifications": {
+          "success": "{{filename}} fichier envoyé avec succès !",
+          "error": "Le téléchargement du fichier {{filename} a échoué."
+        }
+      }
     }
   }
 }

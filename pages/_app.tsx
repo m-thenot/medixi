@@ -151,7 +151,7 @@ const App = (props: React.PropsWithChildren) => {
               ]}
               options={{
                 syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
+                warnWhenUnsavedChanges: false,
                 useNewQueryKeys: true,
               }}
             >

@@ -21,7 +21,9 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
   const { tableProps } = useTable({
     syncWithLocation: true,
 
-    meta: { fields: ["firstname", "lastname", "birth_date"] },
+    meta: {
+      fields: ["firstname", "lastname", "birth_date"],
+    },
   });
 
   return (
@@ -35,6 +37,7 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
           dataIndex="lastname"
           title={translate("patients.fields.lastname")}
         />
+
         <Table.Column
           dataIndex="birth_date"
           title={translate("patients.fields.birthDate")}
