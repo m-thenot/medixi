@@ -13,7 +13,7 @@ import type { NextPage } from "next";
 import { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import React from "react";
-
+import "@styles/global.css";
 import { Header } from "@components/header";
 import { ColorModeContextProvider } from "@contexts";
 import "@refinedev/antd/dist/reset.css";

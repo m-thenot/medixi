@@ -20,4 +20,20 @@ export interface IExamination {
   examination_type: string;
   description: string;
   files: PutBlobResult[];
+  report: string | null;
 }
+
+export type IViewPatient = Pick<
+  IPatient,
+  "birth_date" | "firstname" | "lastname" | "id"
+> & {
+  examinations: Pick<
+    IExamination,
+    | "id"
+    | "examination_date"
+    | "examination_type"
+    | "description"
+    | "files"
+    | "report"
+  >[];
+};

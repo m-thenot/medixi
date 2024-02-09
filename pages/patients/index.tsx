@@ -22,7 +22,7 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
     syncWithLocation: true,
 
     meta: {
-      fields: ["firstname", "lastname", "birth_date"],
+      fields: ["id", "firstname", "lastname", "birth_date"],
     },
   });
 
@@ -47,13 +47,15 @@ const PatientList: React.FC<IResourceComponentsProps> = () => {
         <Table.Column
           title={translate("table.actions")}
           dataIndex="actions"
-          render={(_, record: BaseRecord) => (
-            <Space>
-              <EditButton hideText size="small" recordItemId={record.id} />
-              <ShowButton hideText size="small" recordItemId={record.id} />
-              <DeleteButton hideText size="small" recordItemId={record.id} />
-            </Space>
-          )}
+          render={(_, record: BaseRecord) => {
+            return (
+              <Space>
+                <EditButton hideText size="small" recordItemId={record.id} />
+                <ShowButton hideText size="small" recordItemId={record.id} />
+                <DeleteButton hideText size="small" recordItemId={record.id} />
+              </Space>
+            );
+          }}
         />
       </Table>
     </List>
