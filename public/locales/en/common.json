@@ -154,6 +154,8 @@
       "title": "Add a new patient",
       "examTitle": "Examination"
     },
+    "saveReport": "Save report",
+    "saveReportSuccess": "Report saved successfully !",
     "fields": {
       "id": "Id",
       "createdOn": "Created on",
@@ -166,6 +168,7 @@
       "examDate": "Examination date",
       "examDatePlaceholder": "Sélectionner an examination date",
       "examDocuments": "Files",
+      "reportPlaceholder": "<h2>Report</h2>",
       "upload": {
         "title": "Click or drag file to this area to upload",
         "description": "You can upload one or more files. We only accept files in ZIP and DICOM format.",

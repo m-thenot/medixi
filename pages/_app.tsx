@@ -25,6 +25,7 @@ import { KindeProvider, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { redirect } from "next/navigation";
 import { SettingOutlined, UserOutlined } from "@ant-design/icons";
 import "dayjs/locale/fr";
+import Loader from "@components/Loader/Loader";
 
 const client = (getToken: () => string | null) =>
   new GraphQLClient(process.env.NEXT_PUBLIC_API_URL!, {
@@ -61,7 +62,7 @@ const App = (props: React.PropsWithChildren) => {
   };
 
   if (isLoading) {
-    return <span>loading...</span>;
+    return <Loader />;
   }
 
   const authProvider: AuthBindings = {

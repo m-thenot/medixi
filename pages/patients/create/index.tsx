@@ -26,7 +26,7 @@ interface IPatientCreate {
 
 const PatientCreate: React.FC<IResourceComponentsProps> = () => {
   const translate = useTranslate();
-  const { formProps, saveButtonProps } = useForm<IPatientCreate>();
+  const { formProps } = useForm<IPatientCreate>();
   const submitButton = useRef<HTMLElement>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);

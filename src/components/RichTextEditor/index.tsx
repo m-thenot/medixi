@@ -15,6 +15,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
     <Editor
       apiKey={process.env.NEXT_PUBLIC_TINY_MCE_API_KEY}
       init={{
+        height: 600,
         plugins:
           "tinycomments mentions anchor autolink charmap image link lists media searchreplace table visualblocks wordcount mediaembed casechange export formatpainter permanentpen footnotes advtemplate advtable editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect typography",
         toolbar:

@@ -4,13 +4,15 @@ import {
   IResourceComponentsProps,
   useShow,
   useTranslate,
+  useUpdate,
 } from "@refinedev/core";
 import { DateField, Show, TextField } from "@refinedev/antd";
-import { Card, Typography } from "antd";
+import { Button, Card, Typography } from "antd";
 import RichTextEditor from "@components/RichTextEditor";
 import { EditorEvent } from "tinymce";
 import { useState } from "react";
 import { IViewPatient } from "src/types";
+import sanitizeHtml from "sanitize-html";
 
 const { Title } = Typography;
 
@@ -23,75 +25,136 @@ const PatientShow: React.FC<IResourceComponentsProps> = () => {
         "firstname",
         "lastname",
         "birth_date",
-        "examinations {examination_type, examination_date, description, files, report}",
+        "examinations {id, examination_type, examination_date, description, files, report}",
       ],
     },
   });
   const { data, isLoading } = queryResult;
   const [report, setReport] = useState<string | null>(null);
-
   const record = data?.data as IViewPatient;
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const { mutate } = useUpdate();
 
-  console.log(record);
-
-  const onReportChange = (e: EditorEvent<unknown>) => {
-    console.log("content", e.target.getContent());
-    setReport(e.target.getContent());
-
-    //sanitizeHtml and add a column report into exams database
+  const onSave = () => {
+    setIsSaveLoading(true);
+    mutate(
+      {
+        resource: "examinations",
+        values: {
+          report: sanitizeHtml(report as string),
+        },
+        id: record?.examinations?.[0].id,
+        errorNotification: (_data, _values, _resource) => {
+          return {
+            message: translate("notifications.defaultErrorMessage"),
+            description: translate("notifications.defaultErrorTitle"),
+            type: "error",
+          };
+        },
+        successNotification: (_data, _values, _resource) => {
+          return {
+            message: translate("patients.saveReportSuccess"),
+            type: "success",
+          };
+        },
+      },
+      {
+        onError: (_error, _variables, _context) => {
+          setIsSaveLoading(false);
+        },
+        onSuccess: (_data, _variables, _context) => {
+          setIsSaveLoading(false);
+        },
+      }
+    );
   };
 
-  console.log(queryResult.data?.data);
+  const onReportChange = (e: EditorEvent<unknown>) => {
+    setReport(e.target.getContent());
+  };
 
   return (
     <>
       <Show
         isLoading={isLoading}
         title={`${record?.firstname} ${record?.lastname}`}
-      >
-        <Title level={4}>Patient</Title>
-        <div className="flex justify-between *:w-1/2 mb-3">
-          <div>
-            <Title level={5}>{translate("patients.fields.firstname")}</Title>
-            <TextField value={record?.firstname} />
-          </div>
-          <div>
-            <Title level={5}>{translate("patients.fields.lastname")}</Title>
-            <TextField value={record?.lastname} />
-          </div>
-        </div>
-        <Title level={5}>{translate("patients.fields.birthDate")}</Title>
-        <DateField value={record?.birth_date} locales="fr" />
-      </Show>
-
-      <div className="my-3" />
-
-      <Card bordered={false}>
-        <Title level={4}>Examen</Title>
-        <div className="flex justify-between *:w-1/2 mb-3">
-          <div>
-            <Title level={5}>{translate("patients.fields.examType")}</Title>
-            <TextField value={record?.examinations[0].examination_type} />
-          </div>
-          <div>
-            <Title level={5}>{translate("patients.fields.examDate")}</Title>
-            <DateField
-              value={record?.examinations[0].examination_date}
-              locales="fr"
-            />
-          </div>
-        </div>
-
-        <Title level={5}>{translate("patients.fields.examDetails")}</Title>
-        <TextField value={record?.examinations[0].description} />
-      </Card>
-
-      <div className="my-3" />
-
-      <RichTextEditor
-        onChange={onReportChange}
-        initialValue={record.examinations[0].report}
+        contentProps={{ hidden: true }}
+        headerButtons={() => {
+          return (
+            <Button
+              type="primary"
+              title="Sauvegarder"
+              onClick={onSave}
+              loading={isSaveLoading}
+            >
+              {translate("patients.saveReport")}
+            </Button>
+          );
+        }}
       />
+
+      <div className="md:flex md:gap-4 mt-4 w-full">
+        <div className="w-full mb-3 md:mb-0 md:w-5/12">
+          <Card bordered={false}>
+            <div className="flex justify-between *:w-1/2 mb-3">
+              <div>
+                <Title level={5}>
+                  {translate("patients.fields.firstname")}
+                </Title>
+                <TextField value={record?.firstname} />
+              </div>
+              <div>
+                <Title level={5}>{translate("patients.fields.lastname")}</Title>
+                <TextField value={record?.lastname} />
+              </div>
+            </div>
+            <Title level={5}>{translate("patients.fields.birthDate")}</Title>
+            <DateField value={record?.birth_date} locales="fr" />
+          </Card>
+
+          <div className="my-3" />
+
+          <Card bordered={false}>
+            <Title level={4}>{translate("patients.create.title")}</Title>
+            <div className="flex justify-between *:w-1/2 mb-3">
+              <div>
+                <Title level={5}>{translate("patients.fields.examType")}</Title>
+                <TextField value={record?.examinations?.[0].examination_type} />
+              </div>
+              <div>
+                <Title level={5}>{translate("patients.fields.examDate")}</Title>
+                <DateField
+                  value={record?.examinations?.[0].examination_date}
+                  locales="fr"
+                />
+              </div>
+            </div>
+
+            <Title level={5}>{translate("patients.fields.examDetails")}</Title>
+            <TextField value={record?.examinations?.[0].description} />
+
+            <Title level={5}>
+              {translate("patients.fields.examDocuments")}
+            </Title>
+
+            {record?.examinations?.[0].files.map((file) => (
+              <a className="block" href={file.downloadUrl} download>
+                {file.pathname}
+              </a>
+            ))}
+          </Card>
+        </div>
+
+        <div className="*:w-full">
+          <RichTextEditor
+            onChange={onReportChange}
+            initialValue={
+              record?.examinations?.[0].report ||
+              translate("patients.fields.reportPlaceholder")
+            }
+          />
+        </div>
+      </div>
     </>
   );
 };

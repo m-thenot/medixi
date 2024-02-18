@@ -154,6 +154,8 @@
       "title": "Ajouter un patient",
       "examTitle": "Examen"
     },
+    "saveReport": "Enregistrer le compte rendu",
+    "saveReportSuccess": "Compte rendu enregistré avec succès !",
     "fields": {
       "id": "Id",
       "createdOn": "Créé le",
@@ -166,6 +168,7 @@
       "examDate": "Date d'examen",
       "examDatePlaceholder": "Sélectionner une date d'examen",
       "examDocuments": "Documents",
+      "reportPlaceholder": "<h2>Compte rendu</h2>",
       "upload": {
         "title": "Cliquez ou faites glisser le fichier dans cette zone pour le transférer",
         "description": "Vous pouvez télécharger un ou plusieurs fichiers. Nous n'acceptons que les fichiers au format ZIP et DICOM",
