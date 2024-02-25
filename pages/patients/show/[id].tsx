@@ -2,6 +2,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import {
   IResourceComponentsProps,
+  useNotification,
   useShow,
   useTranslate,
   useUpdate,
@@ -33,7 +34,10 @@ const PatientShow: React.FC<IResourceComponentsProps> = () => {
   const [report, setReport] = useState<string | null>(null);
   const record = data?.data as IViewPatient;
   const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [isPDFGenerationLoading, setIsPDFGenerationLoading] = useState(false);
+
   const { mutate } = useUpdate();
+  const { open } = useNotification();
 
   const onSave = () => {
     setIsSaveLoading(true);
@@ -69,6 +73,42 @@ const PatientShow: React.FC<IResourceComponentsProps> = () => {
     );
   };
 
+  const handleGeneratePdf = async () => {
+    let content = report || (record?.examinations?.[0].report as string);
+    setIsPDFGenerationLoading(true);
+
+    try {
+      const response = await fetch("/api/patients/export-report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ html: content }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `CR_${record?.firstname}-${record?.lastname}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (error) {
+      open?.({
+        type: "error",
+        description: translate("notifications.defaultErrorTitle"),
+        message: translate("notifications.defaultErrorMessage"),
+        undoableTimeout: 5,
+      });
+      console.error("Error generating PDF:", error);
+    } finally {
+      setIsPDFGenerationLoading(false);
+    }
+  };
+
   const onReportChange = (e: EditorEvent<unknown>) => {
     setReport(e.target.getContent());
   };
@@ -81,14 +121,18 @@ const PatientShow: React.FC<IResourceComponentsProps> = () => {
         contentProps={{ hidden: true }}
         headerButtons={() => {
           return (
-            <Button
-              type="primary"
-              title="Sauvegarder"
-              onClick={onSave}
-              loading={isSaveLoading}
-            >
-              {translate("patients.saveReport")}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="default"
+                onClick={handleGeneratePdf}
+                loading={isPDFGenerationLoading}
+              >
+                {translate("patients.exportReport")}
+              </Button>
+              <Button type="primary" onClick={onSave} loading={isSaveLoading}>
+                {translate("patients.saveReport")}
+              </Button>
+            </div>
           );
         }}
       />
@@ -115,7 +159,7 @@ const PatientShow: React.FC<IResourceComponentsProps> = () => {
           <div className="my-3" />
 
           <Card bordered={false}>
-            <Title level={4}>{translate("patients.create.title")}</Title>
+            <Title level={4}>{translate("patients.create.examTitle")}</Title>
             <div className="flex justify-between *:w-1/2 mb-3">
               <div>
                 <Title level={5}>{translate("patients.fields.examType")}</Title>

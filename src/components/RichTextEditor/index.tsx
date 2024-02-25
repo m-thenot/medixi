@@ -17,7 +17,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
       init={{
         height: 600,
         plugins:
-          "tinycomments mentions anchor autolink charmap image link lists media searchreplace table visualblocks wordcount mediaembed casechange export formatpainter permanentpen footnotes advtemplate advtable editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect typography",
+          "anchor autolink charmap image link lists media searchreplace table visualblocks wordcount",
         toolbar:
           "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
         tinycomments_mode: "embedded",
@@ -26,6 +26,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
         language: "fr_FR",
         language_url: "/locales/fr/fr_FR.js",
         spellchecker_language: "fr_FR",
+        content_style: "body { font-family: Arial; }",
       }}
       initialValue={initialValue || ""}
       onChange={onChange}

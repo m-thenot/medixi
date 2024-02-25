@@ -154,6 +154,7 @@
       "title": "Add a new patient",
       "examTitle": "Examination"
     },
+    "exportReport": "Export to pdf",
     "saveReport": "Save report",
     "saveReportSuccess": "Report saved successfully !",
     "fields": {

@@ -154,6 +154,7 @@
       "title": "Ajouter un patient",
       "examTitle": "Examen"
     },
+    "exportReport": "Exporter en PDF",
     "saveReport": "Enregistrer le compte rendu",
     "saveReportSuccess": "Compte rendu enregistré avec succès !",
     "fields": {
