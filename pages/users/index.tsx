@@ -231,15 +231,24 @@ export const getServerSideProps = async ({
   }
 
   const client = await createKindeManagementAPIClient(req, res);
-  const users = await client.usersApi.getUsers();
+  const organizationUsers = await client.organizationsApi.getOrganizationUsers({
+    orgCode: (accessToken as any)?.["x-hasura-org-code"],
+  });
+  const users = await client.usersApi.getUsers({});
   const organization = await client.organizationsApi.getOrganization({
     code: (accessToken as any)?.["x-hasura-org-code"],
   });
 
+  const filterUsers = users.users?.filter((user) =>
+    organizationUsers.organizationUsers?.some(
+      (orgUser) => orgUser.id === user.id
+    )
+  );
+
   return {
     props: {
       ...translateProps,
-      users: JSON.parse(JSON.stringify(users.users)),
+      users: JSON.parse(JSON.stringify(filterUsers)),
       organization: JSON.parse(JSON.stringify(organization)),
     },
   };
