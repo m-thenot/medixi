@@ -1,5 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium-min";
+import puppeteer from "puppeteer-core";
+
+async function getBrowser() {
+  return puppeteer.launch({
+    args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(
+      `https://github.com/Sparticuz/chromium/releases/download/v122.0.0/chromium-v122.0.0-pack.tar`
+    ),
+    // @ts-ignore
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  });
+}
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -7,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const browser = await puppeteer.launch();
+    const browser = await getBrowser();
     const page = await browser.newPage();
     const { html } = req.body;
 
