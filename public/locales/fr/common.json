@@ -131,7 +131,7 @@
     "list": {
       "title": "Utilisateurs",
       "status": {
-        "invitationPending": "🟡 Invitation en attendre",
+        "invitationPending": "🟡 Invitation en attente",
         "active": "🟢 Actif"
       }
     },

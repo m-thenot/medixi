@@ -28,7 +28,7 @@ const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
         );
       } else if (info.file.status === "error") {
         message.error(
-          translate("patients.fields.upload.notifications.success", {
+          translate("patients.fields.upload.notifications.error", {
             filename: info.file.name,
           })
         );
