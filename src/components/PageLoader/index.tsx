@@ -1,6 +1,6 @@
 import React from "react";
 
-const Loader: React.FC = () => {
+const PageLoader: React.FC = () => {
   const dnaCount = 16;
   const dnaItems = Array.from({ length: dnaCount }, (_, i) => i + 1);
 
@@ -25,4 +25,4 @@ const Loader: React.FC = () => {
   );
 };
 
-export default Loader;
+export default PageLoader;
