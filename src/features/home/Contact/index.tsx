@@ -13,7 +13,7 @@ const Contact: React.FC = () => {
     >
       <div className="container px-4 mx-auto">
         <div className="max-w-4xl mx-auto mb-16 text-center">
-          <span className="inline-block py-px px-2 mb-4 text-xs leading-5 text-primary-100 bg-blue-100 font-medium uppercase rounded-9xl">
+          <span className="inline-block py-px px-2 mb-4 text-xs leading-5 text-primary-100 bg-blue-100 font-medium uppercase rounded-full">
             Contact
           </span>
           <h3 className="mb-4 text-4xl leading-tight text-darkslate-900 font-bold tracking-tighter">
