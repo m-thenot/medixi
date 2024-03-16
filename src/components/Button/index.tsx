@@ -33,7 +33,7 @@ const sizes = {
 
 const classnames = {
   primary:
-    "bg-primary-100 text-white hover:bg-primary-200 px-4 disabled:opacity-75",
+    "!bg-primary-100 text-white hover:bg-primary-200 px-4 disabled:opacity-75",
   secondary:
     "bg-white text-slate-800 border border-slate-200 px-4 shadow-sm hover:bg-slate-100 focus:ring-2 focus:ring-slate-200 focus:ring-opacity-50",
   transparent: "bg-transparent px-4 font-semibold",

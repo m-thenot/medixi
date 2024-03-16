@@ -18,7 +18,7 @@ import { Header } from "@components/header";
 import { ColorModeContextProvider } from "@contexts";
 import "@refinedev/antd/dist/reset.css";
 import dataProvider, { GraphQLClient } from "@refinedev/hasura";
-import { App as AntdApp } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
 import { appWithTranslation, useTranslation } from "next-i18next";
 import { AppIcon } from "src/components/app-icon";
 import { KindeProvider, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
@@ -122,44 +122,53 @@ const App = (props: React.PropsWithChildren) => {
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-            <Refine
-              routerProvider={routerProvider}
-              dataProvider={dataProvider(client(getToken))}
-              notificationProvider={useNotificationProvider}
-              authProvider={authProvider}
-              i18nProvider={i18nProvider}
-              resources={[
-                {
-                  name: "patients",
-                  list: "/patients",
-                  create: "/patients/create",
-                  edit: "/patients/edit/:id",
-                  show: "/patients/show/:id",
-                  meta: {
-                    canDelete: false,
-                    icon: <UserOutlined />,
-                  },
+            <ConfigProvider
+              theme={{
+                token: {
+                  fontFamily:
+                    "Poppins, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', sans-serif",
                 },
-                {
-                  name: "users",
-                  list: "/users",
-                  edit: "/users/edit/:id",
-                  meta: {
-                    label: t("users.list.title"),
-                    icon: <SettingOutlined />,
-                  },
-                },
-              ]}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: false,
-                useNewQueryKeys: true,
               }}
             >
-              {props.children}
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-            </Refine>
+              <Refine
+                routerProvider={routerProvider}
+                dataProvider={dataProvider(client(getToken))}
+                notificationProvider={useNotificationProvider}
+                authProvider={authProvider}
+                i18nProvider={i18nProvider}
+                resources={[
+                  {
+                    name: "patients",
+                    list: "/patients",
+                    create: "/patients/create",
+                    edit: "/patients/edit/:id",
+                    show: "/patients/show/:id",
+                    meta: {
+                      canDelete: false,
+                      icon: <UserOutlined />,
+                    },
+                  },
+                  {
+                    name: "users",
+                    list: "/users",
+                    edit: "/users/edit/:id",
+                    meta: {
+                      label: t("users.list.title"),
+                      icon: <SettingOutlined />,
+                    },
+                  },
+                ]}
+                options={{
+                  syncWithLocation: true,
+                  warnWhenUnsavedChanges: false,
+                  useNewQueryKeys: true,
+                }}
+              >
+                {props.children}
+                <RefineKbar />
+                <UnsavedChangesNotifier />
+              </Refine>
+            </ConfigProvider>
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>
@@ -183,7 +192,7 @@ function MyApp({
         Title={({ collapsed }) => (
           <ThemedTitleV2
             collapsed={collapsed}
-            text="Medixi"
+            text={<span className="font-medium">Medixi</span>}
             icon={<AppIcon />}
           />
         )}
@@ -195,6 +204,10 @@ function MyApp({
 
   return (
     <KindeProvider>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      />
       <App>{renderComponent()}</App>
     </KindeProvider>
   );
