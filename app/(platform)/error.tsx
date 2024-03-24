@@ -2,6 +2,7 @@
 
 import { ErrorComponent } from "@refinedev/antd";
 import { useEffect } from "react";
+import { logger } from "src/services/logger";
 
 export default function Error({
   error
@@ -10,7 +11,7 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    logger.error(error);
   }, [error]);
 
   return <ErrorComponent />;

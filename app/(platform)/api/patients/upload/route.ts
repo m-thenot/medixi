@@ -1,5 +1,6 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
+import { logger } from "src/services/logger";
 
 export async function POST(request: Request) {
   const { searchParams } = new URL(`${request.url!}`);
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(blob);
   } catch (error) {
-    console.error("Failed to upload the file.", { error, filename: filename });
+    logger.error("Failed to upload the file.", { error, filename: filename });
 
     return NextResponse.json(
       { message: "Failed to upload the file", error, filename: filename },

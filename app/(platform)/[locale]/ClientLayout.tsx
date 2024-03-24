@@ -11,6 +11,7 @@ import { redirect, useRouter } from "next/navigation";
 import { ThemedLayout } from "@components/ThemeLayout";
 import { useTranslation } from "react-i18next";
 import { RefineKbar } from "@refinedev/kbar";
+import { logger } from "src/services/logger";
 
 const client = (token: string | null) =>
   new GraphQLClient(process.env.NEXT_PUBLIC_API_URL!, {
@@ -54,7 +55,7 @@ const ClientLayout: React.FC<{
       };
     },
     onError: async (error) => {
-      console.error(error);
+      logger.error(error);
       return {
         error
       };

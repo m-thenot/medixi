@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import InviteUserEmail from "src/emails/UserInvitation";
 import { sendEmail } from "src/services/email";
 import { createKindeManagementAPIClient } from "@kinde-oss/kinde-auth-nextjs/server";
+import { logger } from "src/services/logger";
 
 const AUTH_API_URL = process.env.KINDE_ISSUER_URL;
 
@@ -70,14 +71,14 @@ export async function POST(request: Request) {
       );
 
       if (!addToOrganizationResponse.ok) {
-        console.error("Failed to add user to the organization", {
+        logger.error("Failed to add user to the organization", {
           email,
           orgCode
         });
         throw new Error("Failed to add user to the organization");
       }
     } else {
-      console.error("Failed to create the user", { email, orgCode });
+      logger.error("Failed to create the user", { email, orgCode });
       throw new Error("Failed to create the user");
     }
 
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("Failed to send user invitation email", {
+      logger.error("Failed to send user invitation email", {
         email,
         orgCode,
         error
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
       status: 200
     });
   } catch (e: any) {
-    console.error("Failed to create user", { e, email });
+    logger.error("Failed to create user", { e, email });
 
     return NextResponse.json(
       { message: e.message || "Failed to create user" },
@@ -128,7 +129,7 @@ export async function PATCH(request: Request) {
       status: 200
     });
   } catch (e: any) {
-    console.error("Failed to update user", { e, userId: id });
+    logger.error("Failed to update user", { e, userId: id });
 
     return NextResponse.json(
       { message: e.message || "Failed to update user" },
