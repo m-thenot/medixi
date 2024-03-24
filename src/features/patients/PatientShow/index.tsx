@@ -9,6 +9,7 @@ import { useState } from "react";
 import { IViewPatient } from "src/types";
 import sanitizeHtml from "sanitize-html";
 import { useTranslation } from "react-i18next";
+import { logger } from "src/services/logger";
 
 const { Title } = Typography;
 
@@ -98,7 +99,7 @@ const PatientShow: React.FC = () => {
         message: t("notifications.defaultErrorMessage"),
         undoableTimeout: 5
       });
-      console.error("Error generating PDF:", error);
+      logger.error("Error generating PDF:", error);
     } finally {
       setIsPDFGenerationLoading(false);
     }

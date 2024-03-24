@@ -1,6 +1,7 @@
 import chromium from "@sparticuz/chromium-min";
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
+import { logger } from "src/services/logger";
 
 async function getBrowser() {
   return puppeteer.launch({
@@ -40,7 +41,7 @@ export const POST = async (request: Request) => {
       }
     });
   } catch (error) {
-    console.error("Failed to generate PDF", { error });
+    logger.error("Failed to generate PDF", { error });
 
     return NextResponse.json(
       { message: "Failed to generate PDF", error },
