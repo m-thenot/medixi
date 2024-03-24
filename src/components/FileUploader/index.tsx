@@ -4,7 +4,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
 import { PutBlobResult } from "@vercel/blob";
-import { useTranslate } from "@refinedev/core";
+import { useTranslation } from "react-i18next";
 
 const { Dragger } = Upload;
 
@@ -13,7 +13,7 @@ interface IFileUploaderProps {
 }
 
 const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
-  const translate = useTranslate();
+  const { t } = useTranslation();
 
   const props: UploadProps = {
     name: "file",
@@ -22,18 +22,18 @@ const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
       if (info.file.status === "done") {
         setFiles((prev) => [...prev, info.file.response]);
         message.success(
-          translate("patients.fields.upload.notifications.success", {
-            filename: info.file.name,
+          t("patients.fields.upload.notifications.success", {
+            filename: info.file.name
           })
         );
       } else if (info.file.status === "error") {
         message.error(
-          translate("patients.fields.upload.notifications.error", {
-            filename: info.file.name,
+          t("patients.fields.upload.notifications.error", {
+            filename: info.file.name
           })
         );
       }
-    },
+    }
   };
 
   return (
@@ -41,11 +41,9 @@ const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
-      <p className="ant-upload-text">
-        {translate("patients.fields.upload.title")}
-      </p>
+      <p className="ant-upload-text">{t("patients.fields.upload.title")}</p>
       <p className="ant-upload-hint">
-        {translate("patients.fields.upload.description")}
+        {t("patients.fields.upload.description")}
       </p>
     </Dragger>
   );
