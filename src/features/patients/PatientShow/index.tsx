@@ -5,7 +5,7 @@ import { DateField, Show, TextField } from "@refinedev/antd";
 import { Button, Card, Typography } from "antd";
 import RichTextEditor from "@components/RichTextEditor";
 import { EditorEvent } from "tinymce";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IViewPatient } from "src/types";
 import sanitizeHtml from "sanitize-html";
 import { useTranslation } from "react-i18next";
@@ -104,6 +104,12 @@ const PatientShow: React.FC = () => {
       setIsPDFGenerationLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!report && record?.examinations[0].report) {
+      setReport(record?.examinations[0].report);
+    }
+  }, [record]);
 
   const onReportChange = (e: EditorEvent<unknown>) => {
     setReport(e.target.getContent());
