@@ -175,7 +175,7 @@
         "description": "Vous pouvez télécharger un ou plusieurs fichiers. Nous n'acceptons que les fichiers au format ZIP et DICOM",
         "notifications": {
           "success": "{{filename}} fichier envoyé avec succès !",
-          "error": "Le téléchargement du fichier {{filename} a échoué."
+          "error": "Le téléchargement du fichier {{filename}} a échoué."
         }
       }
     }
