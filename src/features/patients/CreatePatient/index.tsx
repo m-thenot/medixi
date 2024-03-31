@@ -5,9 +5,9 @@ import { IResourceComponentsProps, useCreate } from "@refinedev/core";
 import { Create, useForm } from "@refinedev/antd";
 import { Col, DatePicker, Form, Row, Input, Typography, Button } from "antd";
 import FileUploader from "@components/FileUploader";
-import { PutBlobResult } from "@vercel/blob";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { IFile } from "@types";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -27,7 +27,7 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
   const submitButton = useRef<HTMLElement>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [files, setFiles] = useState<PutBlobResult[]>([]);
+  const [files, setFiles] = useState<IFile[]>([]);
 
   const { mutate } = useCreate();
 
