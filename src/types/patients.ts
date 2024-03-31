@@ -1,5 +1,3 @@
-import { PutBlobResult } from "@vercel/blob";
-
 export interface IPatient {
   id: string;
   created_at: number;
@@ -11,6 +9,12 @@ export interface IPatient {
   examinations: IExamination[];
 }
 
+export interface IFile {
+  key: string;
+  bucket: string;
+  contentType: string;
+}
+
 export interface IExamination {
   id: string;
   created_at: number;
@@ -19,7 +23,7 @@ export interface IExamination {
   examination_date: number;
   examination_type: string;
   description: string;
-  files: PutBlobResult[];
+  files: IFile[];
   report: string | null;
 }
 

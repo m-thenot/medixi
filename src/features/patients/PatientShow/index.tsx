@@ -10,6 +10,7 @@ import { IViewPatient } from "src/types";
 import sanitizeHtml from "sanitize-html";
 import { useTranslation } from "react-i18next";
 import { logger } from "src/services/logger";
+import FileDownloader from "@components/FileDownloader";
 
 const { Title } = Typography;
 
@@ -180,14 +181,7 @@ const PatientShow: React.FC = () => {
             <Title level={5}>{t("patients.fields.examDocuments")}</Title>
 
             {record?.examinations?.[0].files.map((file) => (
-              <a
-                key={file.url}
-                className="block"
-                href={file.downloadUrl}
-                download
-              >
-                {file.pathname}
-              </a>
+              <FileDownloader key={file.key} file={file} />
             ))}
           </Card>
         </div>
