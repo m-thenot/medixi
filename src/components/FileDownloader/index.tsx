@@ -9,7 +9,7 @@ interface IFileDownloaderProps {
 }
 
 const getSignedUrl = async (filename: string) => {
-  const response = await fetch(`/api/patients/documents?filename=${filename}`);
+  const response = await fetch(`/api/patients/files?filename=${filename}`);
 
   if (!response.ok) {
     logger.error("Failed to get pre-signed URL.");
@@ -39,7 +39,7 @@ const FileDownloader: React.FC<IFileDownloaderProps> = ({ file }) => {
 
   return (
     <a className="block" href={url} download>
-      {file.key.split("_")[1]}
+      {file.key.split("/")[2]}
     </a>
   );
 };

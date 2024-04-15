@@ -8,9 +8,23 @@ import FileUploader from "@components/FileUploader";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { IFile } from "@types";
+import { logger } from "src/services/logger";
 
 const { Title } = Typography;
 const { TextArea } = Input;
+
+const getStudiesUuid = async (keys: string) => {
+  const response = await fetch(`/api/files/dicom-parser?keys=${keys}`);
+
+  if (!response.ok) {
+    logger.error("Failed to get studies uuid");
+    return null;
+  }
+
+  const { files } = await response.json();
+
+  return files;
+};
 
 interface ICreatePatient {
   firstname: string;
@@ -31,8 +45,20 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
 
   const { mutate } = useCreate();
 
-  const onFinish = (values: ICreatePatient) => {
+  const onFinish = async (values: ICreatePatient) => {
     setIsLoading(true);
+
+    const studiesUuid: { studyInstanceUid: string; key: string }[] =
+      await getStudiesUuid(files.map((file) => file.key).join(","));
+    const mergedMap = new Map();
+
+    files.forEach((item) =>
+      mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
+    );
+    studiesUuid.forEach((item) =>
+      mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
+    );
+    const completedFiles = Array.from(mergedMap.values());
 
     const {
       firstname,
@@ -56,7 +82,7 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
                 examination_date,
                 examination_type,
                 description,
-                files
+                files: completedFiles
               }
             ]
           }
