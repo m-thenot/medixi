@@ -5,17 +5,22 @@ import { logger } from "src/services/logger";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+const client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
+  }
+});
+
 export async function POST(request: Request) {
   const { filename, contentType } = await request.json();
   const contentDisposition = `attachment; filename="${filename}"`;
 
   try {
-    const client = new S3Client({
-      region: process.env.AWS_REGION
-    });
     const { url, fields } = await createPresignedPost(client, {
       Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: `${uuidv4()}_${filename}`,
+      Key: `inputs/${uuidv4()}/${filename}`,
       Conditions: [
         ["content-length-range", 0, 1073741824], // up to 1 GB
         ["starts-with", "$Content-Type", contentType],
@@ -53,10 +58,6 @@ export async function GET(request: Request) {
   }
 
   try {
-    const client = new S3Client({
-      region: process.env.AWS_REGION
-    });
-
     const command = new GetObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: filename

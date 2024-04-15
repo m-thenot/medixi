@@ -181,7 +181,14 @@ const PatientShow: React.FC = () => {
             <Title level={5}>{t("patients.fields.examDocuments")}</Title>
 
             {record?.examinations?.[0].files.map((file) => (
-              <FileDownloader key={file.key} file={file} />
+              <>
+                <FileDownloader key={file.key} file={file} />
+                <a
+                  href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${file.studyInstanceUid}`}
+                >
+                  Viewer
+                </a>
+              </>
             ))}
           </Card>
         </div>
