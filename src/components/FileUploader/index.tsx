@@ -22,7 +22,7 @@ const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
     customRequest: async ({ onSuccess, onError, file }) => {
       try {
         setUploading(true);
-        const response = await fetch("/api/patients/documents", {
+        const response = await fetch("/api/patients/files", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -86,7 +86,7 @@ const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
   };
 
   return (
-    <Dragger {...props} disabled={uploading}>
+    <Dragger {...props} disabled={uploading} multiple>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>

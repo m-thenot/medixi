@@ -13,6 +13,7 @@ export interface IFile {
   key: string;
   bucket: string;
   contentType: string;
+  studyInstanceUid?: string;
 }
 
 export interface IExamination {
