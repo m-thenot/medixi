@@ -152,7 +152,10 @@
   "patients": {
     "create": {
       "title": "Ajouter un patient",
-      "examTitle": "Examen"
+      "examTitle": "Examens"
+    },
+    "search": {
+      "placeholder": "Recherche par nom de famille..."
     },
     "exportReport": "Exporter en PDF",
     "saveReport": "Enregistrer le compte rendu",
@@ -169,6 +172,7 @@
       "examDate": "Date d'examen",
       "examDatePlaceholder": "Sélectionner une date d'examen",
       "examDocuments": "Documents",
+      "examState": "Statut",
       "reportPlaceholder": "<h2>Compte rendu</h2>",
       "upload": {
         "title": "Cliquez ou faites glisser le fichier dans cette zone pour le transférer",
@@ -179,5 +183,26 @@
         }
       }
     }
+  },
+  "examinations": {
+    "title": "Examen",
+    "analyzeTitle": "Analyse",
+    "analyseButton": "Analyser dans le visualiseur"
+  },
+  "examinationTypes": {
+    "MRI": "IRM",
+    "ULTRASOUND": "Ultrasons",
+    "X_RAYS": "Rayons X",
+    "CT_SCAN": "CT Scan",
+    "PET_SCAN": "PET Scan",
+    "FLUOROSCOPY": "Fluoroscopie",
+    "ANGIOGRAPHY": "Angiographie",
+    "MAMMOGRAPHY": "Mammographie",
+    "SCINTIGRAPHY": "Scintigraphie"
+  },
+  "examinationState": {
+    "TO_REVIEW": "À analyser",
+    "REPORT_DRAFTED": "Compte-rendu en cours",
+    "REPORT_FINALIZED": "Compte-rendu terminé"
   }
 }

@@ -3,11 +3,20 @@
 import React, { useRef, useState } from "react";
 import { IResourceComponentsProps, useCreate } from "@refinedev/core";
 import { Create, useForm } from "@refinedev/antd";
-import { Col, DatePicker, Form, Row, Input, Typography, Button } from "antd";
+import {
+  Col,
+  DatePicker,
+  Form,
+  Row,
+  Input,
+  Typography,
+  Button,
+  Select
+} from "antd";
 import FileUploader from "@components/FileUploader";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { IFile } from "@types";
+import { ExaminationState, ExaminationType, IFile } from "@types";
 import { logger } from "src/services/logger";
 
 const { Title } = Typography;
@@ -78,7 +87,7 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
           examinations: {
             data: [
               {
-                state: "new",
+                state: ExaminationState.TO_REVIEW,
                 examination_date,
                 examination_type,
                 description,
@@ -190,7 +199,13 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
                 }
               ]}
             >
-              <Input />
+              <Select>
+                {Object.keys(ExaminationType).map((key) => (
+                  <Select.Option key={key} value={key}>
+                    {t("examinationTypes.".concat(key))}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={12}>

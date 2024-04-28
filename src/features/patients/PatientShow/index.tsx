@@ -1,21 +1,18 @@
 "use client";
 
-import { useNotification, useShow, useUpdate } from "@refinedev/core";
-import { DateField, Show, TextField } from "@refinedev/antd";
-import { Button, Card, Typography } from "antd";
-import RichTextEditor from "@components/RichTextEditor";
-import { EditorEvent } from "tinymce";
-import { useEffect, useState } from "react";
+import { useShow } from "@refinedev/core";
+import { DateField, Show, ShowButton, TextField } from "@refinedev/antd";
+import { Card, Table, Tag, Tooltip, Typography } from "antd";
 import { IViewPatient } from "src/types";
-import sanitizeHtml from "sanitize-html";
 import { useTranslation } from "react-i18next";
-import { logger } from "src/services/logger";
-import FileDownloader from "@components/FileDownloader";
+import { getTagColor } from "@utils/examinations";
+import { useRouter } from "next/navigation";
 
 const { Title } = Typography;
 
 const PatientShow: React.FC = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { queryResult } = useShow({
     meta: {
       fields: [
@@ -23,98 +20,12 @@ const PatientShow: React.FC = () => {
         "firstname",
         "lastname",
         "birth_date",
-        "examinations {id, examination_type, examination_date, description, files, report}"
+        "examinations {id, examination_type, examination_date, description, files, report, state}"
       ]
     }
   });
   const { data, isLoading } = queryResult;
-  const [report, setReport] = useState<string | null>(null);
   const record = data?.data as IViewPatient;
-  const [isSaveLoading, setIsSaveLoading] = useState(false);
-  const [isPDFGenerationLoading, setIsPDFGenerationLoading] = useState(false);
-
-  const { mutate } = useUpdate();
-  const { open } = useNotification();
-
-  const onSave = () => {
-    setIsSaveLoading(true);
-    mutate(
-      {
-        resource: "examinations",
-        values: {
-          report: sanitizeHtml(report as string)
-        },
-        id: record?.examinations?.[0].id,
-        errorNotification: (_data, _values, _resource) => {
-          return {
-            message: t("notifications.defaultErrorMessage"),
-            description: t("notifications.defaultErrorTitle"),
-            type: "error"
-          };
-        },
-        successNotification: (_data, _values, _resource) => {
-          return {
-            message: t("patients.saveReportSuccess"),
-            type: "success"
-          };
-        }
-      },
-      {
-        onError: (_error, _variables, _context) => {
-          setIsSaveLoading(false);
-        },
-        onSuccess: (_data, _variables, _context) => {
-          setIsSaveLoading(false);
-        }
-      }
-    );
-  };
-
-  const handleGeneratePdf = async () => {
-    let content = report || (record?.examinations?.[0].report as string);
-    setIsPDFGenerationLoading(true);
-
-    try {
-      const response = await fetch("/api/patients/export-report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ html: content })
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `CR_${record?.firstname}-${record?.lastname}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      }
-    } catch (error) {
-      open?.({
-        type: "error",
-        description: t("notifications.defaultErrorTitle"),
-        message: t("notifications.defaultErrorMessage"),
-        undoableTimeout: 5
-      });
-      logger.error("Error generating PDF:", error);
-    } finally {
-      setIsPDFGenerationLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!report && record?.examinations[0].report) {
-      setReport(record?.examinations[0].report);
-    }
-  }, [record]);
-
-  const onReportChange = (e: EditorEvent<unknown>) => {
-    setReport(e.target.getContent());
-  };
 
   return (
     <>
@@ -122,26 +33,10 @@ const PatientShow: React.FC = () => {
         isLoading={isLoading}
         title={`${record?.firstname} ${record?.lastname}`}
         contentProps={{ hidden: true }}
-        headerButtons={() => {
-          return (
-            <div className="flex gap-2">
-              <Button
-                type="default"
-                onClick={handleGeneratePdf}
-                loading={isPDFGenerationLoading}
-              >
-                {t("patients.exportReport")}
-              </Button>
-              <Button type="primary" onClick={onSave} loading={isSaveLoading}>
-                {t("patients.saveReport")}
-              </Button>
-            </div>
-          );
-        }}
       />
 
-      <div className="md:flex md:gap-4 mt-4 w-full">
-        <div className="w-full mb-3 md:mb-0 md:w-5/12">
+      <div className="mt-4 w-full">
+        <div className="w-full mb-3 md:mb-0">
           <Card bordered={false}>
             <div className="flex justify-between *:w-1/2 mb-3">
               <div>
@@ -158,50 +53,61 @@ const PatientShow: React.FC = () => {
           </Card>
 
           <div className="my-3" />
-
-          <Card bordered={false}>
-            <Title level={4}>{t("patients.create.examTitle")}</Title>
-            <div className="flex justify-between *:w-1/2 mb-3">
-              <div>
-                <Title level={5}>{t("patients.fields.examType")}</Title>
-                <TextField value={record?.examinations?.[0].examination_type} />
-              </div>
-              <div>
-                <Title level={5}>{t("patients.fields.examDate")}</Title>
-                <DateField
-                  value={record?.examinations?.[0].examination_date}
-                  locales="fr"
-                />
-              </div>
-            </div>
-
-            <Title level={5}>{t("patients.fields.examDetails")}</Title>
-            <TextField value={record?.examinations?.[0].description} />
-
-            <Title level={5}>{t("patients.fields.examDocuments")}</Title>
-
-            {record?.examinations?.[0].files.map((file) => (
-              <>
-                <FileDownloader key={file.key} file={file} />
-                <a
-                  href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${file.studyInstanceUid}`}
-                >
-                  Viewer
-                </a>
-              </>
-            ))}
-          </Card>
         </div>
 
-        <div className="*:w-full">
-          <RichTextEditor
-            onChange={onReportChange}
-            initialValue={
-              record?.examinations?.[0].report ||
-              t("patients.fields.reportPlaceholder")
-            }
-          />
-        </div>
+        <Card bordered={false}>
+          <Title level={4}>{t("patients.create.examTitle")}</Title>
+          <Table dataSource={record?.examinations} rowKey="id">
+            <Table.Column
+              dataIndex="examination_type"
+              title={t("patients.fields.examType")}
+              render={(value) => t("examinationTypes.".concat(value))}
+            />
+            <Table.Column
+              dataIndex="description"
+              title={t("patients.fields.examDetails")}
+              render={(value) => (
+                <>
+                  <Tooltip title={value} placement="topLeft">
+                    <div className="truncate max-w-36">{value}</div>
+                  </Tooltip>
+                </>
+              )}
+            />
+
+            <Table.Column
+              dataIndex="examination_date"
+              title={t("patients.fields.examDate")}
+              render={(value) => <DateField value={value} locales="fr" />}
+            />
+
+            <Table.Column
+              dataIndex="state"
+              title={t("patients.fields.examState")}
+              render={(value) => (
+                <Tag key={value} color={getTagColor(value)}>
+                  {t("examinationState.".concat(value)).toUpperCase()}
+                </Tag>
+              )}
+            />
+
+            <Table.Column
+              title={t("table.actions")}
+              dataIndex="actions"
+              render={() => {
+                return (
+                  <ShowButton
+                    onClick={() =>
+                      router.push(
+                        `/examinations/show/${record.examinations[0].id}`
+                      )
+                    }
+                  />
+                );
+              }}
+            />
+          </Table>
+        </Card>
       </div>
     </>
   );

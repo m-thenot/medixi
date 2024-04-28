@@ -1,7 +1,11 @@
 "use client";
 
 import routerProvider from "@refinedev/nextjs-router";
-import { SettingOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  DatabaseOutlined,
+  SettingOutlined,
+  UserOutlined
+} from "@ant-design/icons";
 import { useNotificationProvider } from "@refinedev/antd";
 import dataProviderHasura, { GraphQLClient } from "@refinedev/hasura";
 import { AuthBindings, Refine } from "@refinedev/core";
@@ -111,6 +115,16 @@ const ClientLayout: React.FC<{
           meta: {
             canDelete: false,
             icon: <UserOutlined />
+          }
+        },
+        {
+          name: "examinations",
+          list: `${pathPrefix}/examinations`,
+          show: `${pathPrefix}/examinations/show/:id`,
+          meta: {
+            label: t("patients.create.examTitle"),
+            canDelete: false,
+            icon: <DatabaseOutlined />
           }
         },
         {
