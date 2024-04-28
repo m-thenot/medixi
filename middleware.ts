@@ -4,7 +4,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { i18nRouter } from "next-i18n-router";
 import i18nConfig from "./src/i18n/i18nConfig";
 
-const protectedUrls = ["/patients", "/users"];
+const protectedUrls = ["/patients", "/users", "/examinations"];
 
 export async function middleware(request: NextRequest) {
   const { isAuthenticated } = getKindeServerSession();

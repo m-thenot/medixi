@@ -152,7 +152,10 @@
   "patients": {
     "create": {
       "title": "Add a new patient",
-      "examTitle": "Examination"
+      "examTitle": "Examinations"
+    },
+    "search": {
+      "placeholder": "Search by lastname..."
     },
     "exportReport": "Export to pdf",
     "saveReport": "Save report",
@@ -169,6 +172,7 @@
       "examDate": "Examination date",
       "examDatePlaceholder": "Sélectionner an examination date",
       "examDocuments": "Files",
+      "examState": "Status",
       "reportPlaceholder": "<h2>Report</h2>",
       "upload": {
         "title": "Click or drag file to this area to upload",
@@ -179,5 +183,26 @@
         }
       }
     }
+  },
+  "examinations": {
+    "title": "Examination",
+    "analyzeTitle": "Analyze",
+    "analyseButton": "Analyze with the viewer"
+  },
+  "examinationTypes": {
+    "MRI": "MRI",
+    "ULTRASOUND": "Ultrasound",
+    "X_RAYS": "X-Rays",
+    "CT_SCAN": "CT Scan",
+    "PET_SCAN": "PET Scan",
+    "FLUOROSCOPY": "Fluoroscopy",
+    "ANGIOGRAPHY": "Angiography",
+    "MAMMOGRAPHY": "Mammography",
+    "SCINTIGRAPHY": "Scintigraphy"
+  },
+  "examinationState": {
+    "TO_REVIEW": "To review",
+    "REPORT_DRAFTED": "Report drafted",
+    "REPORT_FINALIZED": "Report completed"
   }
 }

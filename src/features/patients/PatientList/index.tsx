@@ -9,21 +9,42 @@ import {
   DeleteButton,
   DateField
 } from "@refinedev/antd";
-import { Table, Space } from "antd";
+import { Table, Space, Form, Input } from "antd";
 import { useTranslation } from "react-i18next";
+
+const { Search } = Input;
 
 const PatientList: React.FC = () => {
   const { t } = useTranslation();
-  const { tableProps } = useTable({
+  const { tableProps, searchFormProps } = useTable({
     syncWithLocation: true,
 
     meta: {
       fields: ["id", "firstname", "lastname", "birth_date"]
+    },
+
+    onSearch: (values: any) => {
+      return [
+        {
+          field: "lastname",
+          operator: "contains",
+          value: values.lastname
+        }
+      ];
     }
   });
 
   return (
     <List>
+      <Form
+        {...searchFormProps}
+        layout="inline"
+        style={{ marginBottom: "8px" }}
+      >
+        <Form.Item name="lastname" style={{ width: "300px" }}>
+          <Search placeholder={t("patients.search.placeholder")} allowClear />
+        </Form.Item>
+      </Form>
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex="firstname"
