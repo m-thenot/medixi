@@ -17,6 +17,17 @@ export async function POST(request: Request) {
   const { filename, contentType } = await request.json();
   const contentDisposition = `attachment; filename="${filename}"`;
 
+  if (
+    contentType !== "application/dicom" &&
+    contentType !== "application/zip"
+  ) {
+    return NextResponse.json(
+      { message: "Unsupported content type" },
+      {
+        status: 400
+      }
+    );
+  }
   try {
     const { url, fields } = await createPresignedPost(client, {
       Bucket: process.env.AWS_BUCKET_NAME!,
