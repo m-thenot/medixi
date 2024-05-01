@@ -22,7 +22,9 @@ import { logger } from "src/services/logger";
 const { Title } = Typography;
 const { TextArea } = Input;
 
-const getStudiesUuid = async (keys: string) => {
+const getStudiesUuid = async (
+  keys: string
+): Promise<{ studyInstanceUid: string; key: string }[] | null> => {
   const response = await fetch(`/api/files/dicom-parser?keys=${keys}`);
 
   if (!response.ok) {
@@ -57,14 +59,15 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
   const onFinish = async (values: ICreatePatient) => {
     setIsLoading(true);
 
-    const studiesUuid: { studyInstanceUid: string; key: string }[] =
-      await getStudiesUuid(files.map((file) => file.key).join(","));
+    const studiesUuid = await getStudiesUuid(
+      files.map((file) => file.key).join(",")
+    );
     const mergedMap = new Map();
 
     files.forEach((item) =>
       mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
     );
-    studiesUuid.forEach((item) =>
+    studiesUuid?.forEach((item) =>
       mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
     );
     const completedFiles = Array.from(mergedMap.values());

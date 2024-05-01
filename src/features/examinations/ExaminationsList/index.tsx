@@ -75,7 +75,7 @@ const ExaminationsList: React.FC = () => {
             <FilterDropdown {...props}>
               <Radio.Group>
                 {Object.keys(ExaminationState).map((key) => (
-                  <Radio value={key}>
+                  <Radio value={key} key={key}>
                     {t("examinationState.".concat(key)).toUpperCase()}
                   </Radio>
                 ))}
