@@ -11,7 +11,7 @@ const Banner: React.FC = () => {
       className="relative bg-white overflow-hidden"
       style={{
         backgroundImage: 'url("images/elements/pattern-white.svg")',
-        backgroundPosition: "center",
+        backgroundPosition: "center"
       }}
     >
       <OfflineHeader
@@ -39,6 +39,7 @@ const Banner: React.FC = () => {
                     onClick={() => setIsSignUpModalOpen(true)}
                     variant="primary"
                     size="xlarge"
+                    className="w-full"
                   >
                     S'inscrire
                   </Button>

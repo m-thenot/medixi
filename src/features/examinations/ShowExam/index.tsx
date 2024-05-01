@@ -187,13 +187,13 @@ const ShowExamination: React.FC = () => {
 
           <div className="mt-3">
             <Card bordered={false}>
-              <Title level={4}>Analyse</Title>
+              <Title level={4}>{t("examinations.analyzeTitle")}</Title>
               <LinkButton
                 size="large"
                 target="_blank"
                 href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${record?.files[0].studyInstanceUid}`}
               >
-                Analyser dans le visualiseur
+                {t("examinations.analyseButton")}
               </LinkButton>
             </Card>
           </div>
