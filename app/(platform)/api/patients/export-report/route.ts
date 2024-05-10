@@ -3,13 +3,17 @@ import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
 import { logger } from "src/services/logger";
 
+export const maxDuration = 60;
+
 async function getBrowser() {
   return puppeteer.launch({
     args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(
-      `https://github.com/Sparticuz/chromium/releases/download/v122.0.0/chromium-v122.0.0-pack.tar`
-    ),
+    executablePath:
+      process.env.LOCAL_CHROMIUM ||
+      (await chromium.executablePath(
+        `https://github.com/Sparticuz/chromium/releases/download/v122.0.0/chromium-v122.0.0-pack.tar`
+      )),
     // @ts-ignore
     headless: chromium.headless,
     ignoreHTTPSErrors: true

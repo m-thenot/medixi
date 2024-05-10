@@ -53,7 +53,9 @@ const ShowExamination: React.FC = () => {
       {
         resource: "examinations",
         values: {
-          report: sanitizeHtml(report as string),
+          report: sanitizeHtml(report as string, {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
+          }),
           state: ExaminationState.REPORT_DRAFTED
         },
         id: record?.id,
@@ -191,7 +193,7 @@ const ShowExamination: React.FC = () => {
               <LinkButton
                 size="large"
                 target="_blank"
-                href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${record?.files[0].studyInstanceUid}`}
+                href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${record?.files[0].studyInstanceUid}&examId=${record?.id}`}
               >
                 {t("examinations.analyseButton")}
               </LinkButton>
