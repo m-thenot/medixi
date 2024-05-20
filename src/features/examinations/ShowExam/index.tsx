@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { logger } from "src/services/logger";
 import FileDownloader from "@components/FileDownloader";
 import { LinkButton } from "@components/Button";
+import { usePageVisibility } from "src/hooks";
 
 const { Title } = Typography;
 
@@ -38,7 +39,9 @@ const ShowExamination: React.FC = () => {
       ]
     }
   });
-  const { data, isLoading } = queryResult;
+  const { data, isLoading, refetch } = queryResult;
+  usePageVisibility(refetch);
+
   const [report, setReport] = useState<string | null>(null);
   const record = data?.data as IShowExamination;
   const [isSaveLoading, setIsSaveLoading] = useState(false);
