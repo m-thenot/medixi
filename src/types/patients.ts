@@ -1,5 +1,3 @@
-import { PutBlobResult } from "@vercel/blob";
-
 export interface IPatient {
   id: string;
   created_at: number;
@@ -11,6 +9,19 @@ export interface IPatient {
   examinations: IExamination[];
 }
 
+export interface IFile {
+  key: string;
+  bucket: string;
+  contentType: string;
+  studyInstanceUid?: string;
+}
+
+export enum ExaminationState {
+  TO_REVIEW = "TO_REVIEW",
+  REPORT_DRAFTED = "REPORT_DRAFTED",
+  REPORT_FINALIZED = "REPORT_FINALIZED"
+}
+
 export interface IExamination {
   id: string;
   created_at: number;
@@ -19,7 +30,7 @@ export interface IExamination {
   examination_date: number;
   examination_type: string;
   description: string;
-  files: PutBlobResult[];
+  files: IFile[];
   report: string | null;
 }
 
@@ -35,5 +46,18 @@ export type IViewPatient = Pick<
     | "description"
     | "files"
     | "report"
+    | "state"
   >[];
 };
+
+export enum ExaminationType {
+  MRI = "MRI",
+  ULTRASOUND = "ULTRASOUND",
+  X_RAYS = "X-RAYS",
+  CT_SCAN = "CT_SCAN",
+  PET_SCAN = "PET_SCAN",
+  FLUOROSCOPY = "FLUOROSCOPY",
+  ANGIOGRAPHY = "ANGIOGRAPHY",
+  MAMMOGRAPHY = "MAMMOGRAPHY",
+  SCINTIGRAPHY = "SCINTIGRAPHY"
+}

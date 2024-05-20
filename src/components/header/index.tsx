@@ -1,21 +1,18 @@
-import { DownOutlined } from "@ant-design/icons";
+"use client";
+
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
-import { useGetIdentity, useGetLocale } from "@refinedev/core";
+import { useGetIdentity } from "@refinedev/core";
 import {
   Avatar,
-  Button,
-  Dropdown,
   Layout as AntdLayout,
-  MenuProps,
   Space,
   Switch,
   theme,
-  Typography,
+  Typography
 } from "antd";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { useContext } from "react";
-import { ColorModeContext } from "../../contexts";
+import LanguageChanger from "./LanguageChanger";
+import { ColorModeContext } from "@contexts/ColorMode";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -26,33 +23,10 @@ type IUser = {
   avatar: string;
 };
 
-export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
-  sticky,
-}) => {
-  const { data: user } = useGetIdentity<IUser>();
-
+const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ sticky }) => {
   const { token } = useToken();
+  const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
-
-  const locale = useGetLocale();
-  const { locales } = useRouter();
-  const currentLocale = locale();
-
-  const menuItems: MenuProps["items"] = [...(locales || [])]
-    .sort()
-    .map((lang: string) => ({
-      key: lang,
-      icon: (
-        <span style={{ marginRight: 8 }}>
-          <Avatar size={16} src={`/images/flags/${lang}.svg`} />
-        </span>
-      ),
-      label: (
-        <Link href="/" locale={lang}>
-          {lang === "fr" ? "Français" : "Anglais"}
-        </Link>
-      ),
-    }));
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
@@ -60,7 +34,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     justifyContent: "flex-end",
     alignItems: "center",
     padding: "0px 24px",
-    height: "64px",
+    height: "64px"
   };
 
   if (sticky) {
@@ -72,20 +46,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   return (
     <AntdLayout.Header style={headerStyles}>
       <Space>
-        <Dropdown
-          menu={{
-            items: menuItems,
-            selectedKeys: currentLocale ? [currentLocale] : [],
-          }}
-        >
-          <Button type="text">
-            <Space>
-              <Avatar size={16} src={`/images/flags/${currentLocale}.svg`} />
-              {currentLocale === "fr" ? "Français" : "Anglais"}
-              <DownOutlined />
-            </Space>
-          </Button>
-        </Dropdown>
+        <LanguageChanger />
         <Switch
           checkedChildren="🌛"
           unCheckedChildren="🔆"
@@ -102,3 +63,5 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     </AntdLayout.Header>
   );
 };
+
+export default Header;

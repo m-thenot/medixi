@@ -131,7 +131,7 @@
     "list": {
       "title": "Utilisateurs",
       "status": {
-        "invitationPending": "🟡 Invitation en attendre",
+        "invitationPending": "🟡 Invitation en attente",
         "active": "🟢 Actif"
       }
     },
@@ -152,7 +152,10 @@
   "patients": {
     "create": {
       "title": "Ajouter un patient",
-      "examTitle": "Examen"
+      "examTitle": "Examens"
+    },
+    "search": {
+      "placeholder": "Recherche par nom de famille..."
     },
     "exportReport": "Exporter en PDF",
     "saveReport": "Enregistrer le compte rendu",
@@ -169,15 +172,37 @@
       "examDate": "Date d'examen",
       "examDatePlaceholder": "Sélectionner une date d'examen",
       "examDocuments": "Documents",
+      "examState": "Statut",
       "reportPlaceholder": "<h2>Compte rendu</h2>",
       "upload": {
         "title": "Cliquez ou faites glisser le fichier dans cette zone pour le transférer",
         "description": "Vous pouvez télécharger un ou plusieurs fichiers. Nous n'acceptons que les fichiers au format ZIP et DICOM",
         "notifications": {
           "success": "{{filename}} fichier envoyé avec succès !",
-          "error": "Le téléchargement du fichier {{filename} a échoué."
+          "error": "Le téléchargement du fichier {{filename}} a échoué."
         }
       }
     }
+  },
+  "examinations": {
+    "title": "Examen",
+    "analyzeTitle": "Analyse",
+    "analyseButton": "Analyser dans le visualiseur"
+  },
+  "examinationTypes": {
+    "MRI": "IRM",
+    "ULTRASOUND": "Ultrasons",
+    "X_RAYS": "Rayons X",
+    "CT_SCAN": "CT Scan",
+    "PET_SCAN": "PET Scan",
+    "FLUOROSCOPY": "Fluoroscopie",
+    "ANGIOGRAPHY": "Angiographie",
+    "MAMMOGRAPHY": "Mammographie",
+    "SCINTIGRAPHY": "Scintigraphie"
+  },
+  "examinationState": {
+    "TO_REVIEW": "À analyser",
+    "REPORT_DRAFTED": "Compte-rendu en cours",
+    "REPORT_FINALIZED": "Compte-rendu terminé"
   }
 }
