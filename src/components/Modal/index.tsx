@@ -21,7 +21,10 @@ const Modal: React.FC<IModalProps> = ({ children, onClose }) => {
           className="bg-slate-50 rounded-lg p-6"
         >
           <div className="flex justify-end">
-            <button onClick={onClose} className="mb-3 px-0">
+            <button
+              onClick={onClose}
+              className="mb-3 px-0 border-none outline-none bg-transparent cursor-pointer"
+            >
               <Close width={13} height={13} />
             </button>
           </div>

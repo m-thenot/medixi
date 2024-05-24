@@ -5,7 +5,6 @@ export const usePageVisibility = (onVisible: () => void) => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         onVisible();
-        console.log("agaiin");
       }
     };
 
