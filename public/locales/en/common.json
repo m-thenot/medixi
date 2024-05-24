@@ -187,7 +187,8 @@
   "examinations": {
     "title": "Examination",
     "analyzeTitle": "Analyze",
-    "analyseButton": "Analyze with the viewer"
+    "analyseButton": "Analyze with the viewer",
+    "editReportButton": "Update report"
   },
   "examinationTypes": {
     "MRI": "MRI",

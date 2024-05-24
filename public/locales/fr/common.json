@@ -187,7 +187,8 @@
   "examinations": {
     "title": "Examen",
     "analyzeTitle": "Analyse",
-    "analyseButton": "Analyser dans le visualiseur"
+    "analyseButton": "Analyser dans le visualiseur",
+    "editReportButton": "Modifier le compte rendu"
   },
   "examinationTypes": {
     "MRI": "IRM",

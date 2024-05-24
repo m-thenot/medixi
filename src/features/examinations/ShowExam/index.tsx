@@ -1,18 +1,18 @@
 "use client";
 
-import { useNotification, useShow, useUpdate } from "@refinedev/core";
+import { useNotification, useShow } from "@refinedev/core";
 import { DateField, Show, TextField } from "@refinedev/antd";
 import { Button, Card, Typography } from "antd";
-import RichTextEditor from "@components/RichTextEditor";
 import { EditorEvent } from "tinymce";
 import { useEffect, useState } from "react";
-import { ExaminationState, IExamination } from "src/types";
-import sanitizeHtml from "sanitize-html";
+import { IExamination } from "src/types";
 import { useTranslation } from "react-i18next";
 import { logger } from "src/services/logger";
 import FileDownloader from "@components/FileDownloader";
 import { LinkButton } from "@components/Button";
 import { usePageVisibility } from "src/hooks";
+import { getSignedUrl } from "src/services";
+import Report from "./Report";
 
 const { Title } = Typography;
 
@@ -44,48 +44,8 @@ const ShowExamination: React.FC = () => {
 
   const [report, setReport] = useState<string | null>(null);
   const record = data?.data as IShowExamination;
-  const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isPDFGenerationLoading, setIsPDFGenerationLoading] = useState(false);
-
-  const { mutate } = useUpdate();
   const { open } = useNotification();
-
-  const onSave = () => {
-    setIsSaveLoading(true);
-    mutate(
-      {
-        resource: "examinations",
-        values: {
-          report: sanitizeHtml(report as string, {
-            allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"])
-          }),
-          state: ExaminationState.REPORT_DRAFTED
-        },
-        id: record?.id,
-        errorNotification: (_data, _values, _resource) => {
-          return {
-            message: t("notifications.defaultErrorMessage"),
-            description: t("notifications.defaultErrorTitle"),
-            type: "error"
-          };
-        },
-        successNotification: (_data, _values, _resource) => {
-          return {
-            message: t("patients.saveReportSuccess"),
-            type: "success"
-          };
-        }
-      },
-      {
-        onError: (_error, _variables, _context) => {
-          setIsSaveLoading(false);
-        },
-        onSuccess: (_data, _variables, _context) => {
-          setIsSaveLoading(false);
-        }
-      }
-    );
-  };
 
   const handleGeneratePdf = async () => {
     let content = report || (record?.report as string);
@@ -124,8 +84,38 @@ const ShowExamination: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!report && record?.report) {
-      setReport(record?.report);
+    const getUrl = async (initialReport: string) => {
+      let reportWithCaptures = initialReport;
+
+      const matches = [...initialReport.matchAll(/data-key='([^']+)'/g)];
+      const keys = matches.map((match) => match[1]);
+
+      await Promise.all(
+        keys.map(async (key) => {
+          const url = await getSignedUrl(key);
+
+          const newSrc = `src="${url}"`;
+
+          const regex = new RegExp(`(data-key='${key}'[^>]*)`, "g");
+
+          reportWithCaptures = reportWithCaptures.replace(regex, (match) => {
+            // Check if the src attribute exists
+            if (/src="[^']*"/.test(match)) {
+              // If src attribute exists, replace it
+              return match.replace(/src="[^"]*"/, newSrc);
+            } else {
+              // If src attribute does not exist, add it after data-key
+              return match.replace(/(data-key='[^']*')/, `$1 ${newSrc}`);
+            }
+          });
+        })
+      );
+
+      setReport(reportWithCaptures);
+    };
+
+    if (record?.report) {
+      getUrl(record.report);
     }
   }, [record]);
 
@@ -150,9 +140,6 @@ const ShowExamination: React.FC = () => {
                 loading={isPDFGenerationLoading}
               >
                 {t("patients.exportReport")}
-              </Button>
-              <Button type="primary" onClick={onSave} loading={isSaveLoading}>
-                {t("patients.saveReport")}
               </Button>
             </div>
           );
@@ -204,14 +191,11 @@ const ShowExamination: React.FC = () => {
           </div>
         </div>
 
-        <div className="*:w-full">
-          <RichTextEditor
-            onChange={onReportChange}
-            initialValue={
-              record?.report || t("patients.fields.reportPlaceholder")
-            }
-          />
-        </div>
+        <Report
+          onChange={onReportChange}
+          report={report || t("patients.fields.reportPlaceholder")}
+          examId={record?.id}
+        />
       </div>
     </>
   );
