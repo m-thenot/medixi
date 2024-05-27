@@ -167,6 +167,7 @@
       "lastname": "Lastname",
       "birthDate": "Birth date",
       "birthDatePlaceholder": "Select a date",
+      "age": "Age",
       "examType": "Examination type",
       "examDetails": "Examination details",
       "examDate": "Examination date",
@@ -188,7 +189,8 @@
     "title": "Examination",
     "analyzeTitle": "Analyze",
     "analyseButton": "Analyze with the viewer",
-    "editReportButton": "Update report"
+    "editReportButton": "Update report",
+    "editStateButton": "Update status"
   },
   "examinationTypes": {
     "MRI": "MRI",

@@ -2,10 +2,10 @@
 
 import { useNotification, useShow } from "@refinedev/core";
 import { DateField, Show, TextField } from "@refinedev/antd";
-import { Button, Card, Typography } from "antd";
+import { Button, Card, Space, Tag, Typography } from "antd";
 import { EditorEvent } from "tinymce";
 import { useEffect, useState } from "react";
-import { IExamination } from "src/types";
+import { ExaminationState, IExamination } from "src/types";
 import { useTranslation } from "react-i18next";
 import { logger } from "src/services/logger";
 import FileDownloader from "@components/FileDownloader";
@@ -13,6 +13,7 @@ import { LinkButton } from "@components/Button";
 import { usePageVisibility } from "src/hooks";
 import { getSignedUrl } from "src/services";
 import Report from "./Report";
+import { getTagColor } from "@utils/examinations";
 
 const { Title } = Typography;
 
@@ -180,9 +181,19 @@ const ShowExamination: React.FC = () => {
           <div className="mt-3">
             <Card bordered={false}>
               <Title level={4}>{t("examinations.analyzeTitle")}</Title>
+
+              <Title level={5}>{t("patients.fields.examState")}</Title>
+
+              {record?.state && (
+                <Tag color={getTagColor(record.state as ExaminationState)}>
+                  {t("examinationState.".concat(record.state)).toUpperCase()}
+                </Tag>
+              )}
+
               <LinkButton
                 size="large"
                 target="_blank"
+                className="mt-6"
                 href={`${process.env.NEXT_PUBLIC_VIEWER_URL}/viewer?StudyInstanceUIDs=${record?.files[0].studyInstanceUid}&examId=${record?.id}`}
               >
                 {t("examinations.analyseButton")}
@@ -195,6 +206,7 @@ const ShowExamination: React.FC = () => {
           onChange={onReportChange}
           report={report || t("patients.fields.reportPlaceholder")}
           examId={record?.id}
+          examState={record?.state}
         />
       </div>
     </>

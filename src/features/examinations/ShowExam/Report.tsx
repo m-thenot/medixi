@@ -5,18 +5,27 @@ import { useUpdate } from "@refinedev/core";
 import { ExaminationState } from "@types";
 import sanitizeHtml from "sanitize-html";
 import { useTranslation } from "react-i18next";
-import { Button } from "antd";
+import { Button, Dropdown, MenuProps, Space } from "antd";
 import RichTextEditor from "@components/RichTextEditor";
+import { CheckOutlined, DownOutlined } from "@ant-design/icons";
 
 interface IReportProps {
   onChange: EventHandler<unknown>;
   report: string;
   examId: string;
+  examState?: string;
 }
 
-const Report: React.FC<IReportProps> = ({ onChange, examId, report }) => {
+const Report: React.FC<IReportProps> = ({
+  onChange,
+  examId,
+  report,
+  examState
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [isUpdateStateLoading, setIsUpdateStateLoading] = useState(false);
+
   const { mutate } = useUpdate();
   const { t } = useTranslation();
 
@@ -62,6 +71,51 @@ const Report: React.FC<IReportProps> = ({ onChange, examId, report }) => {
     );
   };
 
+  const updateReportState = (key: ExaminationState) => {
+    setIsUpdateStateLoading(true);
+    mutate(
+      {
+        resource: "examinations",
+        values: {
+          state: key
+        },
+        id: examId,
+        errorNotification: (_data, _values, _resource) => {
+          return {
+            message: t("notifications.defaultErrorMessage"),
+            description: t("notifications.defaultErrorTitle"),
+            type: "error"
+          };
+        },
+        successNotification: (_data, _values, _resource) => {
+          return false;
+        }
+      },
+      {
+        onError: (_error, _variables, _context) => {
+          setIsUpdateStateLoading(false);
+        },
+        onSuccess: (_data, _variables, _context) => {
+          setIsUpdateStateLoading(false);
+        }
+      }
+    );
+  };
+
+  const getItems = (): MenuProps["items"] => {
+    return Object.keys(ExaminationState).map((key) => {
+      return {
+        label: t(`examinationState.${key}`),
+        key,
+
+        icon: key === examState ? <CheckOutlined /> : null,
+        onClick: () => {
+          updateReportState(key as ExaminationState);
+        }
+      };
+    });
+  };
+
   return (
     <>
       <div className="max-w-[780px] relative w-full">
@@ -82,7 +136,24 @@ const Report: React.FC<IReportProps> = ({ onChange, examId, report }) => {
           <RichTextEditor report={report} onChange={onChange} />
 
           <div className="flex justify-end mt-4">
-            <Button type="primary" onClick={onSave} loading={isSaveLoading}>
+            <Dropdown menu={{ items: getItems() }}>
+              <Button
+                className="hover:text-zinc-100"
+                loading={isUpdateStateLoading}
+              >
+                <Space>
+                  {t("examinations.editStateButton")}
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
+
+            <Button
+              type="primary"
+              className="ml-4"
+              onClick={onSave}
+              loading={isSaveLoading}
+            >
               {t("patients.saveReport")}
             </Button>
           </div>

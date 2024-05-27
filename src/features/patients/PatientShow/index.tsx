@@ -7,6 +7,7 @@ import { IViewPatient } from "src/types";
 import { useTranslation } from "react-i18next";
 import { getTagColor } from "@utils/examinations";
 import { useRouter } from "next/navigation";
+import { calculateAge } from "@utils/patient";
 
 const { Title } = Typography;
 
@@ -48,8 +49,17 @@ const PatientShow: React.FC = () => {
                 <TextField value={record?.lastname} />
               </div>
             </div>
-            <Title level={5}>{t("patients.fields.birthDate")}</Title>
-            <DateField value={record?.birth_date} locales="fr" />
+            <div className="flex justify-between *:w-1/2 mb-3">
+              <div>
+                <Title level={5}>{t("patients.fields.birthDate")}</Title>
+                <DateField value={record?.birth_date} locales="fr" />
+              </div>
+
+              <div>
+                <Title level={5}>{t("patients.fields.age")}</Title>
+                <p>{calculateAge(record?.birth_date ?? Date.now())}</p>
+              </div>
+            </div>
           </Card>
 
           <div className="my-3" />
