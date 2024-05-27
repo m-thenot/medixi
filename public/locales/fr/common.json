@@ -167,6 +167,7 @@
       "lastname": "Nom de famille",
       "birthDate": "Date de naissance",
       "birthDatePlaceholder": "Sélectionner une date",
+      "age": "Age",
       "examType": "Type d'examen",
       "examDetails": "Détails de l'examen",
       "examDate": "Date d'examen",
@@ -188,7 +189,8 @@
     "title": "Examen",
     "analyzeTitle": "Analyse",
     "analyseButton": "Analyser dans le visualiseur",
-    "editReportButton": "Modifier le compte rendu"
+    "editReportButton": "Modifier le compte rendu",
+    "editStateButton": "Changer le statut"
   },
   "examinationTypes": {
     "MRI": "IRM",

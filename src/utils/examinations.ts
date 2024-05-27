@@ -8,5 +8,7 @@ export const getTagColor = (state: ExaminationState) => {
       return "orange";
     case ExaminationState.REPORT_FINALIZED:
       return "green";
+    default:
+      return "default";
   }
 };
