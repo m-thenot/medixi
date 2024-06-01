@@ -171,11 +171,11 @@ const ShowExamination: React.FC = () => {
 
             <Title level={5}>{t("patients.fields.examDocuments")}</Title>
 
-            {record?.files.map((file) => (
-              <>
+            <div className="max-h-20 overflow-y-auto">
+              {record?.files.map((file) => (
                 <FileDownloader key={file.key} file={file} />
-              </>
-            ))}
+              ))}
+            </div>
           </Card>
 
           <div className="mt-3">

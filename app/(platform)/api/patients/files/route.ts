@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   const contentDisposition = `attachment; filename="${filename}"`;
 
   if (
+    contentType &&
     contentType !== "application/dicom" &&
     contentType !== "application/zip"
   ) {

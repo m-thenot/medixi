@@ -1,100 +1,69 @@
 "use client";
 import React, { useState } from "react";
-import { InboxOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
-import { message, Upload } from "antd";
+import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { logger } from "src/services/logger";
-import { IFile } from "@types";
-
-const { Dragger } = Upload;
+import { useDropzone } from "react-dropzone";
 
 interface IFileUploaderProps {
-  setFiles: React.Dispatch<React.SetStateAction<IFile[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  files: File[];
 }
 
-const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles }) => {
+const FileUploader: React.FC<IFileUploaderProps> = ({ setFiles, files }) => {
   const { t } = useTranslation();
-  const [uploading, setUploading] = useState(false);
 
-  const props: UploadProps = {
-    name: "file",
-    customRequest: async ({ onSuccess, onError, file }) => {
-      try {
-        setUploading(true);
-        const response = await fetch("/api/patients/files", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            filename: (file as File).name,
-            contentType: (file as File).type
-          })
-        });
+  const onDropAccepted = (acceptedFiles: File[]) => {
+    setFiles((files) => [...files, ...acceptedFiles]);
+  };
+  const { getRootProps, getInputProps } = useDropzone({
+    onDropAccepted,
+    accept: {
+      "application/dicom": [".dcm"],
+      "application/zip": [".zip"]
+    }
+  });
 
-        if (!response.ok) {
-          throw new Error("Failed to get pre-signed URL.");
-        }
-
-        const { url, fields } = await response.json();
-        const formData = new FormData();
-
-        Object.entries(fields).forEach(([key, value]) => {
-          formData.append(key, value as string);
-        });
-
-        formData.append("file", file);
-
-        const uploadResponse = await fetch(url, {
-          method: "POST",
-          body: formData
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error("S3 Upload Error");
-        }
-
-        onSuccess?.({
-          key: fields.key,
-          contentType: (file as File).type,
-          bucket: fields.bucket
-        });
-      } catch (error: any) {
-        logger.error("Failed to upload document:", error);
-        onError?.(error);
-      } finally {
-        setUploading(false);
-      }
-    },
-    onChange(info) {
-      if (info.file.status === "done") {
-        setFiles((prev) => [...prev, info.file.response]);
-        message.success(
-          t("patients.fields.upload.notifications.success", {
-            filename: info.file.name
-          })
-        );
-      } else if (info.file.status === "error") {
-        message.error(
-          t("patients.fields.upload.notifications.error", {
-            filename: info.file.name
-          })
-        );
-      }
+  const onRemove = (filename: string) => () => {
+    const findIndex = files.findIndex((file) => file.name === filename);
+    if (findIndex !== -1) {
+      const newFiles = [...files];
+      newFiles.splice(findIndex, 1);
+      setFiles(newFiles);
     }
   };
 
   return (
-    <Dragger {...props} disabled={uploading} multiple>
-      <p className="ant-upload-drag-icon">
-        <InboxOutlined />
-      </p>
-      <p className="ant-upload-text">{t("patients.fields.upload.title")}</p>
-      <p className="ant-upload-hint">
-        {t("patients.fields.upload.description")}
-      </p>
-    </Dragger>
+    <div className="relative" onClick={() => console.log("ok")}>
+      <div {...getRootProps({ className: "ant-upload-wrapper" })}>
+        <input {...getInputProps()} />
+        <div className="relative w-full h-full text-center bg-white bg-opacity-[0.04] hover:border-[#3c89e8] border border-dashed border-gray-600 rounded-lg cursor-pointer transition-colors duration-300 px-4">
+          <InboxOutlined
+            className="text-5xl mt-4 mb-3"
+            style={{ color: "#3c89e8" }}
+          />
+          <p className="text-base mb-1">{t("patients.fields.upload.title")}</p>
+          <p className="text-slate-500 mt-2">
+            {t("patients.fields.upload.description")}
+          </p>
+        </div>
+      </div>
+      <ul className="max-h-36 overflow-y-auto mt-2 p-0">
+        {files.map((file) => (
+          <li
+            key={file.name}
+            className="w-full py-1 px-1 list-none flex justify-between hover:bg-[rgba(255,255,255,0.05)]"
+          >
+            {file.name}
+            <button
+              onClick={onRemove(file.name)}
+              className="hover:bg-[rgba(255,255,255,0.1)] cursor-pointer bg-transparent outline-none border-none hover:text-red-500"
+            >
+              <DeleteOutlined style={{ color: "currentcolor" }} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
