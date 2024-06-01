@@ -2,9 +2,10 @@ import React from "react";
 
 interface ILoaderProps {
   color?: string;
+  size?: number;
 }
 
-const Loader: React.FC<ILoaderProps> = ({ color = "#fff" }) => {
+const Loader: React.FC<ILoaderProps> = ({ color = "#fff", size = 16 }) => {
   return (
     <>
       <div className="lds-ring">
@@ -25,8 +26,8 @@ const Loader: React.FC<ILoaderProps> = ({ color = "#fff" }) => {
             box-sizing: border-box;
             display: block;
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: ${size}px;
+            height: ${size}px;
             border: 2px solid ${color};
             border-radius: 50%;
             animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;

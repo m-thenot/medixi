@@ -34,6 +34,16 @@ export interface IExamination {
   report: string | null;
 }
 
+type InputExamination = Pick<
+  IExamination,
+  "examination_date" | "examination_type" | "description" | "files" | "state"
+>;
+
+export type InputPatient = Pick<
+  IPatient,
+  "birth_date" | "firstname" | "lastname"
+> & { examinations: { data: InputExamination[] } };
+
 export type IViewPatient = Pick<
   IPatient,
   "birth_date" | "firstname" | "lastname" | "id"

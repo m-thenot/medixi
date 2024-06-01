@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { IResourceComponentsProps, useCreate } from "@refinedev/core";
+import {
+  IResourceComponentsProps,
+  useCreate,
+  useNotification
+} from "@refinedev/core";
 import { Create, useForm } from "@refinedev/antd";
 import {
   Col,
@@ -16,7 +20,7 @@ import {
 import FileUploader from "@components/FileUploader";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { ExaminationState, ExaminationType, IFile } from "@types";
+import { ExaminationState, ExaminationType, IFile, InputPatient } from "@types";
 import { logger } from "src/services/logger";
 
 const { Title } = Typography;
@@ -42,7 +46,7 @@ interface ICreatePatient {
   lastname: string;
   birth_date: number;
   examination_type: string;
-  examination_date: string;
+  examination_date: number;
   description: string;
 }
 
@@ -52,74 +56,148 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
   const submitButton = useRef<HTMLElement>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [files, setFiles] = useState<IFile[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const { open } = useNotification();
 
   const { mutate } = useCreate();
 
   const onFinish = async (values: ICreatePatient) => {
     setIsLoading(true);
 
-    const studiesUuid = await getStudiesUuid(
-      files.map((file) => file.key).join(",")
+    try {
+      const uploadedFiles = await uploadFiles(files);
+      const studiesUuid = await getStudiesUuid(
+        uploadedFiles.map((file) => file.key).join(",")
+      );
+      const completedFiles = mergeFileData(uploadedFiles, studiesUuid);
+
+      const {
+        firstname,
+        lastname,
+        birth_date,
+        examination_date,
+        examination_type,
+        description
+      } = values;
+      await createPatient({
+        firstname,
+        lastname,
+        birth_date,
+        examinations: {
+          data: [
+            {
+              state: ExaminationState.TO_REVIEW,
+              examination_date,
+              examination_type,
+              description,
+              files: completedFiles
+            }
+          ]
+        }
+      });
+
+      setIsLoading(false);
+      router.push("/patients");
+    } catch (error) {
+      setIsLoading(false);
+      logger.error("Error during patient creation:", error);
+      open?.({
+        type: "error",
+        description: t("notifications.defaultErrorTitle"),
+        message: t("notifications.defaultErrorMessage"),
+        undoableTimeout: 5
+      });
+    }
+  };
+
+  const uploadFiles = async (files: File[]): Promise<IFile[]> => {
+    return await Promise.all(
+      files.map(async (file) => {
+        const response = await fetch("/api/patients/files", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            contentType: file.type
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to get pre-signed URL.");
+        }
+
+        const { url, fields } = await response.json();
+        const formData = new FormData();
+
+        Object.entries(fields).forEach(([key, value]) => {
+          formData.append(key, value as string);
+        });
+
+        formData.append("file", file);
+
+        const uploadResponse = await fetch(url, {
+          method: "POST",
+          body: formData
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error("S3 Upload Error");
+        }
+
+        return {
+          key: fields.key,
+          contentType: file.type,
+          bucket: fields.bucket
+        };
+      })
     );
+  };
+
+  const mergeFileData = (
+    uploadedFiles: IFile[],
+    studiesUuid: { studyInstanceUid: string; key: string }[] | null
+  ) => {
     const mergedMap = new Map();
 
-    files.forEach((item) =>
+    uploadedFiles.forEach((item) =>
       mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
     );
     studiesUuid?.forEach((item) =>
       mergedMap.set(item.key, { ...mergedMap.get(item.key), ...item })
     );
-    const completedFiles = Array.from(mergedMap.values());
 
-    const {
-      firstname,
-      lastname,
-      birth_date,
-      examination_date,
-      examination_type,
-      description
-    } = values;
-    mutate(
-      {
-        resource: "patients",
-        values: {
-          firstname,
-          lastname,
-          birth_date,
-          examinations: {
-            data: [
-              {
-                state: ExaminationState.TO_REVIEW,
-                examination_date,
-                examination_type,
-                description,
-                files: completedFiles
-              }
-            ]
+    return Array.from(mergedMap.values());
+  };
+
+  const createPatient = async (patientData: InputPatient) => {
+    return new Promise<void>((resolve, reject) => {
+      mutate(
+        {
+          resource: "patients",
+          values: patientData,
+          meta: {
+            fields: ["id"]
+          },
+          errorNotification: (_data, _values, _resource) => {
+            return {
+              message: t("notifications.defaultErrorMessage"),
+              description: t("notifications.defaultErrorTitle"),
+              type: "error"
+            };
           }
         },
-        meta: {
-          fields: ["id"]
-        },
-        errorNotification: (_data, _values, _resource) => {
-          return {
-            message: t("notifications.defaultErrorMessage"),
-            description: t("notifications.defaultErrorTitle"),
-            type: "error"
-          };
+        {
+          onError: (error) => {
+            reject(error);
+          },
+          onSuccess: () => {
+            resolve();
+          }
         }
-      },
-      {
-        onError: (_error, _variables, _context) => {
-          setIsLoading(false);
-        },
-        onSuccess: (_data, _variables, _context) => {
-          setIsLoading(false);
-          router.push("/patients");
-        }
-      }
-    );
+      );
+    });
   };
 
   return (
@@ -250,7 +328,7 @@ const CreatePatient: React.FC<IResourceComponentsProps> = () => {
           </label>
         </div>
 
-        <FileUploader setFiles={setFiles} />
+        <FileUploader setFiles={setFiles} files={files} />
         <Button hidden ref={submitButton} type="primary" htmlType="submit" />
       </Form>
     </Create>
