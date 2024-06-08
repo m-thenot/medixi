@@ -3,10 +3,11 @@
 import React, { useRef, useState } from "react";
 import { useNotification } from "@refinedev/core";
 import { Edit } from "@refinedev/antd";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Skeleton } from "antd";
 import { User } from "@kinde-oss/kinde-typescript-sdk/dist/types";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { updateUser } from "src/actions";
 
 interface IUserEditProps {
   user: User;
@@ -16,7 +17,6 @@ export const EditUser: React.FC<IUserEditProps> = ({ user }) => {
   const { t } = useTranslation();
   const { firstName, lastName, preferredEmail } = user;
   const submitButton = useRef<HTMLElement>(null);
-  const router = useRouter();
   const params = useParams<{ id: string }>();
 
   const { open } = useNotification();
@@ -30,18 +30,14 @@ export const EditUser: React.FC<IUserEditProps> = ({ user }) => {
     lastName: string;
   }) => {
     setIsLoading(true);
-    const requestOptions = {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+
+    try {
+      await updateUser({
         givenName: firstName,
         familyName: lastName,
         id: params.id
-      })
-    };
-    const result = await fetch("/api/users", requestOptions);
+      });
 
-    if (result.ok) {
       setIsLoading(false);
       open?.({
         type: "success",
@@ -50,9 +46,8 @@ export const EditUser: React.FC<IUserEditProps> = ({ user }) => {
         undoableTimeout: 5
       });
 
-      router.refresh();
       close();
-    } else {
+    } catch (e) {
       setIsLoading(false);
       open?.({
         type: "error",
