@@ -40,7 +40,7 @@ const ClientLayout: React.FC<{
   const pathPrefix = i18n.language === "fr" ? "" : `/${i18n.language}`;
 
   if (isLoading) {
-    return <PageLoader />;
+    return <PageLoader fullScreen />;
   }
 
   const authProvider: AuthBindings = {

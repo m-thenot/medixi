@@ -8,8 +8,8 @@ import { useRef, useState } from "react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { Organization } from "@kinde-oss/kinde-typescript-sdk";
 
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { inviteUserToOrganization } from "src/actions";
 
 interface IUserListProps {
   users: User[];
@@ -20,7 +20,6 @@ const UserList: React.FC<IUserListProps> = ({ users, organization }) => {
   const { t } = useTranslation();
   const { user } = useKindeAuth();
   const { open } = useNotification();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const submitButton = useRef<HTMLElement>(null);
   const {
@@ -43,21 +42,17 @@ const UserList: React.FC<IUserListProps> = ({ users, organization }) => {
     lastname: string;
   }) => {
     setIsLoading(true);
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+
+    try {
+      await inviteUserToOrganization({
         email,
         firstname,
         lastname,
-        orgCode: organization.code,
-        orgName: organization.name,
-        invitedByFirstname: user?.given_name
-      })
-    };
-    const result = await fetch("/api/users", requestOptions);
+        orgCode: organization.code!,
+        orgName: organization.name!,
+        invitedByFirstname: user?.given_name!
+      });
 
-    if (result.ok) {
       setIsLoading(false);
       open?.({
         type: "success",
@@ -66,10 +61,8 @@ const UserList: React.FC<IUserListProps> = ({ users, organization }) => {
         undoableTimeout: 5
       });
 
-      router.refresh();
-
       close();
-    } else {
+    } catch {
       setIsLoading(false);
       open?.({
         type: "error",
