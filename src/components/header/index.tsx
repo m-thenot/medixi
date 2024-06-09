@@ -13,6 +13,7 @@ import {
 import React, { useContext } from "react";
 import LanguageChanger from "./LanguageChanger";
 import { ColorModeContext } from "@contexts/ColorMode";
+import OrganizationSwitcher from "./OrganizationSwitcher";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -29,12 +30,7 @@ const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ sticky }) => {
   const { mode, setMode } = useContext(ColorModeContext);
 
   const headerStyles: React.CSSProperties = {
-    backgroundColor: token.colorBgElevated,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    padding: "0px 24px",
-    height: "64px"
+    backgroundColor: token.colorBgElevated
   };
 
   if (sticky) {
@@ -44,8 +40,16 @@ const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ sticky }) => {
   }
 
   return (
-    <AntdLayout.Header style={headerStyles}>
-      <Space>
+    <AntdLayout.Header
+      style={headerStyles}
+      className={`h-16 py-6	 justify-between items-center flex`}
+    >
+      <div className="lg:hidden">
+        <OrganizationSwitcher />
+      </div>
+      <div className="hidden lg:block" />
+
+      <Space className="sm:!flex justify-end items-center !hidden">
         <LanguageChanger />
         <Switch
           checkedChildren="🌛"
@@ -55,7 +59,7 @@ const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({ sticky }) => {
         />
         {(user?.name || user?.avatar) && (
           <Space style={{ marginLeft: "8px" }} size="middle">
-            {user?.name && <Text strong>{user.name}</Text>}
+            {user?.name && <Text>{user.name}</Text>}
             {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
           </Space>
         )}
