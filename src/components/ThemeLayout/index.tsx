@@ -1,23 +1,24 @@
 "use client";
 
-import { AppIcon } from "@components/app-icon";
 import Header from "@components/header";
-import { ThemedLayoutV2, ThemedTitleV2 } from "@refinedev/antd";
+import OrganizationSwitcher from "@components/header/OrganizationSwitcher";
+import { ThemedLayout as ThemedLayout2 } from "@refinedev/antd";
 import React from "react";
 
 export const ThemedLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <ThemedLayoutV2
-      Header={() => <Header sticky />}
+    <ThemedLayout2
+      Header={() => <Header />}
       Title={({ collapsed }) => (
-        <ThemedTitleV2
-          collapsed={collapsed}
-          text={<span className="font-medium">Medixi</span>}
-          icon={<AppIcon />}
-        />
+        <div
+          className="hidden lg:block"
+          style={collapsed ? { transform: "translateX(175px)" } : {}}
+        >
+          <OrganizationSwitcher />
+        </div>
       )}
     >
       {children}
-    </ThemedLayoutV2>
+    </ThemedLayout2>
   );
 };
